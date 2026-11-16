@@ -5,17 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PiggySweep</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-<!-- Chart.js CDN for Dashboards -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root {--ov:.4; --bg:#F3F0FF; --card:#fff; --ink:#1E1B3A; --mut:#5E5A80; --line:#E3DEF7; --teal:#6D28D9; --tealbg:#EDE7FD; --amb:#A85A08; --ambbg:#FBEBD6; --onteal:#fff; --warn-bg:#FFF4E5; --warn-txt:#8A3B00; --warn-border:#FFE0B2; --some:#2F6FE4; --grad:linear-gradient(135deg,#3B6FE8 0%,#7C3AED 55%,#DB2777 100%); --sky1:#DCE8FF; --sky2:#EFE4FF; --sky3:#FFE3F1; box-sizing:border-box; padding-top:env(safe-area-inset-top,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark; --ov:.72; --bg:#110E22; --card:#1C1838; --ink:#ECE8FB; --mut:#B3ACD6; --line:#332D58; --teal:#A78BFA; --tealbg:#2A2352; --amb:#F0A04B; --ambbg:#3B2A14; --warn-bg:#3A1D04; --warn-txt:#FFD2A6; --warn-border:#6A3608; --some:#6EA8FF; --sky1:#14193A; --sky2:#1E1540; --sky3:#2D1438}}
-:root[data-theme="dark"]{color-scheme:dark; --ov:.72; --bg:#110E22; --card:#1C1838; --ink:#ECE8FB; --mut:#B3ACD6; --line:#332D58; --teal:#A78BFA; --tealbg:#2A2352; --amb:#F0A04B; --ambbg:#3B2A14; --warn-bg:#3A1D04; --warn-txt:#FFD2A6; --warn-border:#6A3608; --some:#6EA8FF; --sky1:#14193A; --sky2:#1E1540; --sky3:#2D1438}
+:root {--ov:.4; --bg:#F3F0FF; --card:#fff; --ink:#1E1B3A; --mut:#5E5A80; --line:#E3DEF7; --teal:#6D28D9; --tealbg:#EDE7FD; --amb:#A85A08; --ambbg:#FBEBD6; --onteal:#fff; --warn-bg:#FFF4E5; --warn-txt:#8A3B00; --warn-border:#FFE0B2; --some:#2F6FE4; --grad:linear-gradient(135deg,#3B6FE8 0%,#7C3AED 55%,#DB2777 100%); box-sizing:border-box; padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark; --ov:.72; --bg:#110E22; --card:#1C1838; --ink:#ECE8FB; --mut:#B3ACD6; --line:#332D58; --teal:#A78BFA; --tealbg:#2A2352; --amb:#F0A04B; --ambbg:#3B2A14; --warn-bg:#3A1D04; --warn-txt:#FFD2A6; --warn-border:#6A3608; --some:#6EA8FF;}}
+:root[data-theme="dark"]{color-scheme:dark; --ov:.72; --bg:#110E22; --card:#1C1838; --ink:#ECE8FB; --mut:#B3ACD6; --line:#332D58; --teal:#A78BFA; --tealbg:#2A2352; --amb:#F0A04B; --ambbg:#3B2A14; --warn-bg:#3A1D04; --warn-txt:#FFD2A6; --warn-border:#6A3608; --some:#6EA8FF;}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0; background-color:var(--bg); color:var(--ink); font:400 16px/1.5 "Plus Jakarta Sans",system-ui,sans-serif}
 
-/* PiggySweep Background Images */
+/* PiggySweep Background Images (Using Relative Paths for App Publishing) */
 body::before {
     content: "";
     position: fixed;
@@ -26,11 +24,9 @@ body::before {
     background-repeat: no-repeat;
 }
 
-/* Background Allocations */
-.bg-profile::before { background-image: url("image_e0d0db.jpg"); }
-.bg-plan::before, .bg-dash::before, .bg-today::before, .bg-inv::before { background-image: url("image_e0d0b9.jpg"); }
+.bg-profile::before { background-image: url("./piggy-login-bg.png"); }
+.bg-plan::before, .bg-dash::before, .bg-today::before, .bg-inv::before { background-image: url("./piggy-home-bg.png"); }
 
-/* Smooth Tab Animation */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -106,7 +102,7 @@ button:focus-visible, input:focus-visible{outline:3px solid var(--teal); outline
 .brand-icon img { width: 100%; height: 100%; object-fit: cover; }
 .goal{border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:12px; background:var(--card)}
 
-/* Add Modal Styles */
+/* Modal Styles */
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.5); z-index: 1000;
@@ -133,17 +129,16 @@ button:focus-visible, input:focus-visible{outline:3px solid var(--teal); outline
 </div>
 
 <script>
-var LOGO="PiggySweep_logo.png";
-["icon","apple-touch-icon"].forEach(function(r){var l=document.createElement("link");l.rel=r;l.href=LOGO;document.head.appendChild(l)});
+/* Relative path so it works perfectly in GitHub Pages and future Mobile Apps */
+var LOGO="./PiggySweep_logo.png";
+
 var K='ps_v1', tab='', tag='want', qStep=1, cat='food', dv='act', pd='month', ity='mf', irec=false;
 
 function dflt(){return{p:{name:'', age:'', gender:'', sp:{}, sv:{}, pay:'', paySpouse:'', paySide:'', fix:'', vr:'', g:8, goals:[{n:'🏠 House',a:'',y:5}]}, tx:[], inv:[], mode:'reset', dec:'', last:null}}
 function load(){try{var s=JSON.parse(localStorage.getItem(K)); if(s&&s.p)return s}catch(e){} return dflt()}
 var S=load();
-
-/* Safety check */
 S.inv = S.inv || [];
-if(S.bud) delete S.bud; 
+if(S.bud) delete S.bud;
 
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 var $=function(i){return document.getElementById(i)};
@@ -168,9 +163,9 @@ function render(){
     document.body.className = 'bg-'+tab;
     $('nav').innerHTML = [['profile','Profile'],['plan','Plan'],['dash','Dashboard'],['today','Daily'],['inv','Invest']].map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'<button class="fab" aria-label="Add expense" onclick="showAddModal()">+</button>';
     
-    var logoHtml = '<div class="brand"><div class="brand-icon"><img src="'+LOGO+'" alt="PiggySweep Logo"></div><span>PiggySweep</span></div>';
+    var logoHtml = '<div class="brand"><div class="brand-icon"><img src="'+LOGO+'" alt="PiggySweep Logo" onerror="this.style.display=\'none\'"></div><span>PiggySweep</span></div>';
     
-    $('app').innerHTML = logoHtml + (tab==='profile'?pr() : tab==='plan'?pl() : tab==='dash'?db() : tab==='inv'?iv() : td()) + '<p class="mut" style="margin-top:20px; text-align:center; color:rgba(255,255,255,0.7);">Calculator only, not investment advice. Your data stays securely on this device.</p>';
+    $('app').innerHTML = logoHtml + (tab==='profile'?pr() : tab==='plan'?pl() : tab==='dash'?db() : tab==='inv'?iv() : td()) + '<p class="mut" style="margin-top:20px; text-align:center; color:rgba(255,255,255,0.7); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">Calculator only, not investment advice. Your data stays securely on this device.</p>';
     
     $('modalContent').innerHTML = addFormHtml();
     window.scrollTo(0,0);
@@ -193,7 +188,7 @@ function fl(l,v,f,ph,m){return '<label>'+l+'</label><input inputmode="'+(m||'dec
 function pr(){
   if(num(S.p.pay)>0 && qStep===0){
     return '<h1>Your money profile 👤</h1>' + 
-    '<div class="card"><h2>About PiggySweep 🐷</h2><p class="mut" style="font-size:14px; margin:0">PiggySweep is your 100% private financial companion. It uses the <b>Need/Want/Sometimes</b> philosophy to show you exactly how much your luxury lifestyle ("Wants") is costing your long-term goals. It tracks your daily allowance, warns you if you overspend on luxuries, and manages your investments—all offline.</p></div>' +
+    '<div class="card"><p style="font-size:15px; margin:0; line-height:1.5">PiggySweep is your 100% private financial companion. It uses the <b>Need / Want / Sometimes</b> rule to show you exactly how much your luxury lifestyle ("Wants") is costing your long-term goals. It calculates your safe daily allowance, warns you if you overspend on luxuries, and manages your investments—all offline.</p></div>' +
     '<div class="card">'+(S.p.name?'<div class="row"><span>Name</span><b>'+esc(S.p.name)+(num(S.p.age)?', '+esc(S.p.age):'')+'</b></div>':'')+'<div class="row"><span>Total income</span><b>'+inr(inc())+'</b></div><div class="row"><span>Planned spending</span><b>'+inr(sT())+'</b></div><div class="row"><span>Savings plan</span><b>'+inr(tot(S.p.sv))+'</b></div><button class="btn alt" style="margin-top:16px" onclick="qStep=1; render()">✏️ Edit answers</button></div>' +
     '<div class="card"><h2>Data & Backup 🛡️</h2><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup JSON</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer; font-size:14px; font-weight:700;">📂 Restore JSON<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div></div>' +
     '<button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border)" onclick="rs()">Clear all my data</button>';
@@ -203,7 +198,7 @@ function pr(){
   bk=function(n){return '<button class="btn alt sm" style="margin-top:12px" onclick="qStep='+n+'; render()">Back</button>'};
   if(qStep===1){
     h+='<h1>Welcome to PiggySweep! 🐷</h1>';
-    h+='<div class="card" style="background:var(--tealbg); border-color:var(--teal); color:var(--ink)"><h2 style="color:var(--teal)">Why PiggySweep?</h2><p style="font-size:14px">PiggySweep helps you take control of your money by turning your income and goals into a clear, daily action plan.</p><p style="font-size:14px; margin-bottom:4px"><b>✨ The Need / Want / Sometimes Rule:</b></p><ul style="margin:0; padding-left:20px; font-size:13px"><li style="margin-bottom:6px"><b>🟢 Needs (Essentials):</b> Rent, groceries, bills. These keep you secure.</li><li style="margin-bottom:6px"><b>🟠 Wants (Luxuries):</b> Dining out, upgrades, cabs. <b>This is where long-term goals usually go to die.</b> The app tracks this strictly and issues <b>smart warnings</b> if your luxury lifestyle threatens your goals.</li><li style="margin-bottom:6px"><b>🔵 Sometimes (Curveballs):</b> Unexpected medical bills or repairs. They aren\'t luxuries, so they don\'t penalize your "Wants" tracking.</li><li style="margin-bottom:6px"><b>100% Private:</b> No bank logins. Your data never leaves this device.</li></ul></div>';
+    h+='<div class="card"><h2 style="color:var(--teal)">Why PiggySweep?</h2><p style="font-size:14px">We turn your income and goals into a clear daily action plan.</p><p style="font-size:14px; margin-bottom:4px"><b>✨ The Need / Want / Sometimes Rule:</b></p><p style="font-size:13px; line-height:1.5; margin-bottom:8px"><b>🟢 Needs (Essentials):</b> Rent, groceries, bills. These keep you secure.</p><p style="font-size:13px; line-height:1.5; margin-bottom:8px"><b>🟠 Wants (Luxuries):</b> Dining out, upgrades, cabs. <b>This is where long-term goals usually go to die.</b> We track this strictly and issue <b>smart warnings</b> if your lifestyle threatens your goals.</p><p style="font-size:13px; line-height:1.5; margin-bottom:0"><b>🔵 Sometimes (Curveballs):</b> Unexpected medical bills or repairs. They aren\'t luxuries, so they don\'t penalize your "Wants" tracking.</p></div>';
     h+='<div class="card"><label>What should we call you?</label><input value="'+esc(S.p.name)+'" placeholder="Your name" onchange="st(\'name\',this.value)">'+fl('Your age',S.p.age,"st('age',this.value)",'e.g. 35','numeric')+'<label>Gender (optional)</label><div class="chips wrap">'+['Male','Female','Other','Prefer not to say'].map(function(g){return '<button class="chip'+(S.p.gender===g?' on':'')+'" onclick="sgd(\''+g+'\')">'+g+'</button>'}).join('')+'</div><p class="mut" style="margin-top:10px">Age shows how old you will be when each goal ends. Gender is optional and is not used in any calculation.</p>'+nx(2)+'</div>';
   } else if(qStep===2){
     h+='<h1>Hi '+esc(S.p.name)+', your income 💵</h1><p class="mut" style="color:rgba(255,255,255,0.9); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">Add a spouse or side income if it applies.</p><div class="card">'+fl('Your monthly take-home pay (₹)',S.p.pay,"st('pay',this.value)",'e.g. 78000')+fl("Spouse's take-home pay (optional, ₹)",S.p.paySpouse,"st('paySpouse',this.value)",'e.g. 50000')+fl('Side or freelance income (optional, ₹)',S.p.paySide,"st('paySide',this.value)",'e.g. 10000')+nx(3)+bk(1)+'</div>';
@@ -275,71 +270,35 @@ function chart(v,l,area){
 }
 
 function dn(segs,base,a,b){
-  if(base<=0) return '';
   var C=2*Math.PI*70,off=0,arcs='';
-  segs.forEach(function(s){var len=s.v/base*C; arcs+='<circle cx="90" cy="90" r="70" fill="none" stroke="'+s.c+'" stroke-width="30" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"/>'; off+=len});
-  return '<div class="dn"><svg viewBox="0 0 180 180" width="220" height="220" role="img" aria-label="Category split chart" style="transform:rotate(-90deg)">'+arcs+'</svg><div><b style="font-size:28px">'+a+'</b><span class="mut">'+b+'</span></div></div>';
+  if(base<=0) {
+      arcs='<circle cx="90" cy="90" r="70" fill="none" stroke="#E2E8F0" stroke-width="30"/>';
+  } else {
+      segs.forEach(function(s){var len=s.v/base*C; arcs+='<circle cx="90" cy="90" r="70" fill="none" stroke="'+s.c+'" stroke-width="30" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"/>'; off+=len});
+  }
+  return '<div class="dn"><svg viewBox="0 0 180 180" width="220" height="220" role="img" aria-label="Category split chart" style="transform:rotate(-90deg)">'+arcs+'</svg><div><b style="font-size:28px;color:var(--ink)">'+a+'</b><span class="mut">'+b+'</span></div></div>';
 }
 
-function smartInsights() {
-  var h = '<div class="card" style="background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%); border: 1px solid #C7D2FE;">';
-  h += '<h2 style="color:var(--teal)">✨ Smart Insights</h2>';
-  h += '<ul style="margin:0; padding-left:20px; font-size:14px; line-height:1.6; color:var(--ink)">';
-  
-  var n = new Date(), T = day(n), curM = T.slice(0, 7);
-  var lastMDate = new Date(n.getFullYear(), n.getMonth()-1, 1);
-  var prvM = day(lastMDate).slice(0, 7);
-  
-  var curTx = S.tx.filter(function(t){return t.d.slice(0,7)===curM});
-  var prvTx = S.tx.filter(function(t){return t.d.slice(0,7)===prvM});
-  
-  // Rule 1: Goal Delay Warning (Wants vs Primary Goal)
-  var dWants = sumTx(curTx.filter(function(t){return t.g==='want'}));
-  if(dWants > 0 && S.p.goals.length > 0) {
-    var g1 = S.p.goals[0];
-    var req = need(num(g1.a), num(g1.y)||1, num(S.p.g));
-    if(req > 0) {
-       var daysDelayed = Math.round((dWants / req) * 30);
-       if(daysDelayed > 0) {
-         h += '<li style="margin-bottom:8px">You have spent <b>'+inr(dWants)+'</b> on luxuries ("Wants") this month. Mathematically, that delays your <b>'+esc(g1.n)+'</b> goal by about <b>'+daysDelayed+' days</b>.</li>';
-       }
+function getInsights(tc, tp, dWants, g1) {
+    if(tc === 0) return '<p class="mut" style="font-size:14px; margin-bottom:12px;">Welcome to your dashboard. Log your first expense to see your financial breakdown.</p>';
+    
+    var txt = "You have spent <b>" + inr(tc) + "</b> so far this period. ";
+    
+    if (dWants > (inc() * 0.3)) {
+        txt += "<span style='color:#D97706'>Your luxury spending is currently high. Reducing non-essential purchases will help accelerate your primary goal. </span>";
+    } else if (dWants > 0 && g1) {
+        var req = need(num(g1.a), num(g1.y)||1, num(S.p.g));
+        if (req > 0) {
+            var days = Math.round((dWants / req) * 30);
+            txt += "Your discretionary spending is equivalent to <b>" + days + " days</b> of saving for your " + esc(g1.n) + ". ";
+        }
     }
-  }
-  
-  // Rule 2: Food/Dining Trend
-  var curFood = sumTx(curTx.filter(function(t){return t.c==='food'}));
-  var prvFood = sumTx(prvTx.filter(function(t){return t.c==='food'}));
-  if (prvFood > 0) {
-     var pct = Math.round(((curFood - prvFood) / prvFood) * 100);
-     if (pct > 10) {
-        h += '<li style="margin-bottom:8px">Your food/dining spend is up <b>'+pct+'%</b> compared to last month. Consider cooking at home a bit more to stay on track.</li>';
-     } else if (pct < -10) {
-        h += '<li style="margin-bottom:8px">Great job! Your food/dining spend is down <b>'+Math.abs(pct)+'%</b> from last month.</li>';
-     }
-  }
-
-  // Rule 3: Investment Education
-  var tips = [
-    "<b>Did you know?</b> A Systematic Investment Plan (SIP) averages out market volatility over time by investing a fixed amount regularly.",
-    "<b>Did you know?</b> Fixed Deposits (FDs) offer capital protection and guaranteed returns, though they may not always outpace inflation.",
-    "<b>Did you know?</b> The Public Provident Fund (PPF) offers tax-free interest, making it a powerful tool for long-term safe wealth building.",
-    "<b>Did you know?</b> Keeping 3-6 months of essential living expenses in a liquid emergency fund protects your investments from being sold early during a crisis."
-  ];
-  h += '<li style="margin-bottom:8px">' + tips[Math.floor(Math.random() * tips.length)] + '</li>';
-  
-  h += '</ul>';
-  h += '<p class="mut" style="font-size:12px; margin-top:12px; padding-top:12px; border-top:1px solid #E2E8F0; margin-bottom:0"><i>PiggySweep Insights use your logged data to provide mathematical observations. We do not provide investment advice. Please consult a registered adviser for portfolio recommendations.</i></p>';
-  h += '</div>';
-  return h;
+    return '<p style="font-size:14px; color:var(--ink); line-height:1.6; padding-bottom:16px; border-bottom:1px solid var(--line); margin-bottom:16px;">' + txt + '</p>';
 }
 
 function dba(){
   var r=rng(),cur=S.tx.filter(function(t){return ins(t,r.cs,r.ce)}),prv=S.tx.filter(function(t){return ins(t,r.ps,r.pe)}),tc=sumTx(cur),tp=sumTx(prv),
   h='<h1>Spend analysis 📊</h1><div class="chips" style="margin:0 0 12px">'+[['week','Week'],['month','Month'],['year','Year']].map(function(x){return '<button class="chip'+(pd===x[0]?' on':'')+'" onclick="spd(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
-  
-  h += smartInsights();
-  
-  if(!tc) return h+'<div class="card"><p>No spends logged for this '+r.nm+' yet.</p><button class="btn" onclick="showAddModal()">Log a spend</button></div>';
   
   var n=new Date(),y=n.getFullYear(),m=n.getMonth(),d=n.getDate(),v=[],l=[],i,k;
   if(pd==='week'){for(i=6;i>=0;i--){var x=new Date(y,m,d-i); k=day(x); v.push(sumTx(S.tx.filter(function(t){return t.d===k}))); l.push(x.toLocaleDateString('en-IN',{weekday:'short'}))}}
@@ -349,11 +308,10 @@ function dba(){
   var ch=tp>0?(tc-tp)/tp*100:null;
   var dWants = sumTx(cur.filter(function(t){return t.g==='want'}));
   
-  if(inc() > 0 && dWants > (inc() * 0.3)) {
-      h+='<div class="alert" style="background:#FEF2F2; border-color:#FCA5A5; color:#991B1B">🚨 <b>Luxury Warning:</b> You have spent ' + inr(dWants) + ' on "Wants" (luxuries) this period, exceeding 30% of your income. Reducing luxury spending helps you achieve your goals faster.</div>';
-  }
-
-  h+='<div class="card"><p class="mut" style="margin:0">Spent this '+r.nm+'</p><div class="big" style="font-size:34px">'+inr(tc)+'</div><p style="margin:4px 0 0;font-weight:700;color:var(--'+(ch>0?'amb':'teal')+')">'+(ch==null?'No earlier data to compare':(ch>0?'▲ ':'▼ ')+Math.abs(Math.round(ch))+'% '+(ch>0?'higher':'lower')+' than '+r.cmp)+'</p><div style="color:var(--ink);margin-top:10px">'+chart(v,l,pd==='month')+'</div></div>';
+  h+='<div class="card">';
+  h+= getInsights(tc, tp, dWants, S.p.goals.length ? S.p.goals[0] : null);
+  
+  h+='<p class="mut" style="margin:0">Spent this '+r.nm+'</p><div class="big" style="font-size:34px">'+inr(tc)+'</div><p style="margin:4px 0 0;font-weight:700;color:var(--'+(ch>0?'amb':'teal')+')">'+(ch==null?'No earlier data to compare':(ch>0?'▲ ':'▼ ')+Math.abs(Math.round(ch))+'% '+(ch>0?'higher':'lower')+' than '+r.cmp)+'</p><div style="color:var(--ink);margin-top:10px">'+chart(v,l,pd==='month')+'</div></div>';
   
   if(pd==='month'&&inc()>0) h+='<div class="card"><h2>Income vs spent</h2><div class="row" style="border:0"><span>Income</span><b>'+inr(inc())+'</b></div><div class="bar"><i style="background:var(--grad);width:100%"></i></div><div class="row" style="border:0"><span>Spent so far</span><b>'+inr(tc)+' ('+Math.round(tc/inc()*100)+'%)</b></div><div class="bar"><i style="background:var(--amb);width:'+Math.min(100,tc/inc()*100)+'%"></i></div></div>';
   
@@ -551,28 +509,12 @@ function td(){
     var sw=ds.reduce(function(s,d){return s+Math.max(0,base-sum(mt.filter(function(t){return fx(t)&&t.d===d})))},0);
     
     var dg=c.gt/30; 
-    var needTotal = sum(mt.filter(function(t){return t.g==='need'}));
-    var wantTotal = sum(mt.filter(function(t){return t.g==='want'}));
-    var someTotal = sum(mt.filter(function(t){return t.g==='some'}));
     
-    var totalSpent = needTotal + wantTotal + someTotal;
-    var monthlyNeedsBudget = sT();
-    var totalAllowance = c.flex + monthlyNeedsBudget;
-    
-    var nPct = totalAllowance > 0 ? (needTotal / totalAllowance)*100 : 0;
-    var wPct = totalAllowance > 0 ? (wantTotal / totalAllowance)*100 : 0;
-    var sPct = totalAllowance > 0 ? (someTotal / totalAllowance)*100 : 0;
-
     var h='<h1>'+(S.p.name?esc(S.p.name)+'’s day':'Today')+'</h1><p class="mut" style="color:rgba(255,255,255,0.9); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">'+n.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})+'</p>';
     h+='<div class="card hero'+(rem<0?' over':'')+'"><div>'+(rem<0?'Over today’s free spending by':'Left to spend freely today')+'</div><div class="big">'+inr(Math.abs(rem))+'</div><div style="opacity:.9;font-size:14px">Today’s allowance '+inr(al)+(S.mode==='spread'?' (spread over the month)':'')+'</div></div>';
     
     if(rem>=0 && al>0 && tsp/al>=0.8) h+='<div class="alert">⏳ You have used '+Math.round(tsp/al*100)+'% of today’s allowance.</div>';
     
-    var I = inc();
-    if(I > 0 && wantTotal > (I * 0.3)) {
-        h+='<div class="alert" style="background:#FEF2F2; border-color:#FCA5A5; color:#991B1B">🚨 <b>Luxury Warning:</b> You have spent ' + inr(wantTotal) + ' on "Wants" (luxuries), which is over 30% of your income. Cutting back here will speed up your goal progress!</div>';
-    }
-
     if(rem<0 && S.dec!==T) h+='<div class="card"><h2>⚠️ You spent more than today’s allowance</h2><p class="mut">Choose how to handle it. You decide.</p><button class="btn" onclick="dc(\'spread\')">Spread it over the rest of the month</button><button class="btn alt" onclick="dc(\'reset\')">Reset tomorrow</button></div>';
     
     if(sw>0) h+='<div class="card"><h2>🐷 Set aside on paper</h2><div class="big" style="font-size:32px;color:var(--teal)">'+inr(sw)+'</div><p class="mut">'+(dg>0?'That is about <b>'+(sw/dg).toFixed(1)+' days</b> of goal saving. ':'')+'It counts days you logged something and kept under your allowance. No money moves; it is a tally.</p></div>';
@@ -581,7 +523,44 @@ function td(){
     return h;
 }
 
-// Initial Render
+// Backup & Export Functions
+function exportData() {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S, null, 2));
+    var dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "piggysweep_backup_" + new Date().toISOString().slice(0,10) + ".json");
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    dlAnchor.remove();
+}
+
+function importData(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var parsed = JSON.parse(e.target.result);
+            if (parsed && parsed.p) {
+                S = parsed;
+                S.inv = S.inv || [];
+                if(S.bud) delete S.bud;
+                save();
+                tab = 'today';
+                qStep = 0;
+                render();
+                alert('Data successfully restored!');
+            } else {
+                alert('Invalid backup file format.');
+            }
+        } catch(err) {
+            alert('Could not parse JSON backup file.');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Initial render
 render();
 </script>
 </body>
