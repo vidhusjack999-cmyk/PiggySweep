@@ -462,20 +462,25 @@ async function resetPassword() {
     catch (e) { showAuthMessage(firebaseAuthError(e), true); }
 }
 async function doLogout() {
-    var buttons = document.querySelectorAll('button[onclick="doLogout()"]');
-    buttons.forEach(function (b) { b.disabled = true; b.textContent = 'Signing out…'; });
+    // Switch the UI immediately; Firebase sign-out then clears the local auth session.
+    window.__piggySweepLoggingOut = true;
+    window.__appOn = false;
+    var fabs = $('fabs'); if (fabs) fabs.style.display = 'none';
+    goView('loginView');
+    showAuthMessage('Signing out…', false);
     try {
-        window.__piggySweepLoggingOut = true;
         await firebase.auth().signOut();
-        window.__appOn = false;
-        var fabs = $('fabs'); if (fabs) fabs.style.display = 'none';
-        goView('loginView');
+        activeUid = '';
+        K = LEGACY_K;
+        S = dflt();
         showAuthMessage('You have been signed out successfully.', false);
     } catch (e) {
         window.__piggySweepLoggingOut = false;
-        buttons.forEach(function (b) { b.disabled = false; b.textContent = '↪️ Log Out'; });
         var message = 'Could not sign out. ' + firebaseAuthError(e);
-        if ($('authMessage')) showAuthMessage(message, true);
+        showAuthMessage(message, true);
+        // If sign-out failed, return to the still-authenticated app.
+        var currentUser = firebase.auth().currentUser;
+        if (currentUser) startApp();
         alert(message);
     }
 }
@@ -539,7 +544,8 @@ function go(t){
     else if(tab==='inv') out = iv();
     else out = td();
     
-    $('app').innerHTML = '<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span></div>' + out;
+    var profileGreeting = S.p.name ? '<div class="profile-greeting" style="margin:4px 0 14px;padding:10px 14px;border-radius:14px;background:var(--card);color:var(--ink);font-weight:700">Hi, '+esc(S.p.name)+(num(S.p.age)>0?' · '+esc(S.p.age):'')+'</div>' : '';
+    $('app').innerHTML = '<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span></div>' + profileGreeting + out;
     var fb=$('fabs'); if(fb) fb.style.display=(window.__appOn && !(tab==='profile' && !isProfileComplete()))?'flex':'none';
     $('modalContent').innerHTML = addFormHtml();
     window.scrollTo(0,0);
