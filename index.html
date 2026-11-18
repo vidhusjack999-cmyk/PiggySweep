@@ -235,12 +235,12 @@ body::after{content:""; position:fixed; inset:0; z-index:-1; background:var(--bg
 <div id="loginView" class="view">
     <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 32px 24px;">
         <h1 style="margin-bottom:24px">Welcome Back 👋</h1>
-        <input class="auth-input" id="email" type="email" placeholder="Email" autocomplete="email" aria-label="Email">
-        <input class="auth-input" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password">
-        <button class="btn" onclick="doLogin()">Login</button>
-        <button class="btn alt" style="margin-top:12px" onclick="doLogin()">Sign up</button>
-        <button class="btn ghost" style="margin-top:8px" onclick="doLogin()">Continue as Guest</button>
-        <p class="auth-note">Accounts and cloud sync are coming later. For now everything stays on this device, so any option above simply opens the app.</p>
+        <input class="auth-input" id="email" type="email" placeholder="Email address" autocomplete="email" aria-label="Email address">
+        <input class="auth-input" id="password" type="password" placeholder="Password (at least 6 characters)" autocomplete="current-password" aria-label="Password">
+        <button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
+        <button class="btn alt" id="signupBtn" style="margin-top:12px" onclick="doSignup()">Create Account</button>
+        <button class="btn ghost" style="margin-top:8px" onclick="resetPassword()">Forgot password?</button>
+        <p id="authMessage" class="auth-note" role="status" aria-live="polite">Sign in to PiggySweep. Your financial information stays on this device and is not uploaded to Firebase.</p>
     </div>
 </div>
 
@@ -389,9 +389,52 @@ function isProfileComplete(){
 }
 
 
-function doLogin() {
-    localStorage.setItem('ps_auth', 'true');
-    if(!S.p.pay || num(S.p.pay) === 0) goView('benefitsView'); else startApp();
+function showAuthMessage(message, isError) {
+    var el = $('authMessage');
+    if (el) { el.textContent = message; el.style.color = isError ? 'var(--warn-txt)' : 'var(--mut)'; }
+}
+function authCredentials() {
+    var email = ($('email').value || '').trim();
+    var password = $('password').value || '';
+    if (!email || !password) { showAuthMessage('Please enter your email address and password.', true); return null; }
+    if (password.length < 6) { showAuthMessage('Password must contain at least 6 characters.', true); return null; }
+    return {email: email, password: password};
+}
+async function doLogin() {
+    var c = authCredentials(); if (!c) return;
+    try { await firebase.auth().signInWithEmailAndPassword(c.email, c.password); }
+    catch (e) { showAuthMessage(firebaseAuthError(e), true); }
+}
+async function doSignup() {
+    var c = authCredentials(); if (!c) return;
+    try {
+        await firebase.auth().createUserWithEmailAndPassword(c.email, c.password);
+        showAuthMessage('Account created successfully. Opening PiggySweep…', false);
+    } catch (e) { showAuthMessage(firebaseAuthError(e), true); }
+}
+async function resetPassword() {
+    var email = ($('email').value || '').trim();
+    if (!email) { showAuthMessage('Enter your email address first, then choose Forgot password.', true); return; }
+    try { await firebase.auth().sendPasswordResetEmail(email); showAuthMessage('Password reset email sent. Check your inbox.', false); }
+    catch (e) { showAuthMessage(firebaseAuthError(e), true); }
+}
+async function doLogout() {
+    try { await firebase.auth().signOut(); }
+    catch (e) { alert(firebaseAuthError(e)); }
+}
+function firebaseAuthError(e) {
+    var code = e && e.code;
+    var messages = {
+      'auth/email-already-in-use':'This email already has an account. Please log in.',
+      'auth/invalid-email':'Please enter a valid email address.',
+      'auth/weak-password':'Choose a stronger password with at least 6 characters.',
+      'auth/user-not-found':'No account found for this email. Please sign up first.',
+      'auth/wrong-password':'Incorrect password. Try again or reset your password.',
+      'auth/invalid-credential':'Email or password is incorrect. Please check and try again.',
+      'auth/too-many-requests':'Too many attempts. Please wait and try again.',
+      'auth/network-request-failed':'Network error. Check your internet connection.'
+    };
+    return messages[code] || ((e && e.message) ? e.message : 'Authentication failed. Please try again.');
 }
 
 function scrollNext() {
@@ -518,7 +561,7 @@ function pl(){
     if(c.gs.length){
         h += '<div class="card"><h2>Growth Simulator 📊</h2><p class="mut">Adjust assumed return rate to see how compounding affects your required monthly savings.</p><div class="row" style="border:0; padding-bottom:0"><span>Rate: <b id="g_val_lbl">'+num(S.p.g)+'%</b></span><b style="color:var(--teal); font-size:18px" id="g_req_lbl">'+inr(c.gt)+'/mo</b></div><input type="range" min="0" max="15" step="1" value="'+num(S.p.g)+'" onchange="ugr(this.value)"></div>';
     }
-    h+='<div class="card"><h2>Settings ⚙️</h2><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
+    h+='<div class="card"><h2>Settings ⚙️</h2><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
     return h;
 }
 function ugr(v){ S.p.g=v; save(); go('plan'); }
@@ -938,7 +981,7 @@ function importData(e) {
     };
     r.readAsText(f);
 }
-function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); localStorage.removeItem('ps_auth'); location.reload();}}
+function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); location.reload();}}
 
 /* --- Boot (runs after everything above is defined) --- */
 (function(){
@@ -949,10 +992,33 @@ function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); localSt
     var upd = function(){ var w = (bs.children[0].offsetWidth || 1) + 16, i = Math.round(bs.scrollLeft / w); Array.prototype.forEach.call(bd.children, function(s,k){ s.className = k === i ? 'on' : ''; }); };
     bs.addEventListener('scroll', upd); upd();
   }
-  if(localStorage.getItem('ps_auth')){
-    if(!S.p.pay || num(S.p.pay) === 0) startOnboarding(); else startApp();
-  }
+  goView('launchView'); // Firebase Authentication decides whether to show login or the app.
 })();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script>
+// PiggySweep Firebase Authentication only. Financial records remain in device localStorage.
+const firebaseConfig = {
+  apiKey: "AIzaSyCQrVvUNva_Mnoqf4w848YMP-z96i7oIGM",
+  authDomain: "piggysweep.firebaseapp.com",
+  projectId: "piggysweep",
+  storageBucket: "piggysweep.firebasestorage.app",
+  messagingSenderId: "1086036870492",
+  appId: "1:1086036870492:web:9f59b13e8fbe5397ed6d99",
+  measurementId: "G-QPHLEGJPDH"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    if (!S.p.pay || num(S.p.pay) === 0) goView('benefitsView');
+    else startApp();
+  } else {
+    window.__appOn = false;
+    var fabs = $('fabs'); if (fabs) fabs.style.display = 'none';
+    goView('launchView');
+  }
+});
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
