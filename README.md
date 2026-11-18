@@ -15,3 +15,11 @@ Upload the contents of this folder to the same directory on a static HTTPS host 
 - The login flow in this front-end is a local demo gate, not secure account authentication.
 - App data is stored in the browser's local storage; it is not synced across devices.
 - JavaScript syntax and manifest JSON were checked. A full browser/device functional test has not been performed.
+
+## Copyright & Credits
+
+**PiggySweep™**
+
+Designed & Developed by Vidyalakshmi Raghuraman
+
+© 2026 Vidyalakshmi Raghuraman. All rights reserved.
