@@ -312,7 +312,7 @@ body { overflow-x:hidden; }
             <div>
                 <h3>🐷 Daily tracking</h3>
                 <p style="color:var(--ink); font-weight:700; margin-bottom:8px">Know where your money goes</p>
-                <p>Tag each spend as a <b>Need</b>, <b>Want</b> or <b>Sometimes</b> and see what it does to your goal.</p>
+                <p>Classify expenses as <b>Essential</b>, <b>Lifestyle</b> or <b>Depends / Mixed</b>. See how spending affects your budget and goals.</p>
             </div>
             <button class="btn alt" onclick="scrollNext()">Next ➔</button>
         </div>
@@ -320,11 +320,19 @@ body { overflow-x:hidden; }
             <div>
                 <h3>🚨 Alerts</h3>
                 <p style="color:var(--ink); font-weight:700; margin-bottom:8px">Get a nudge before it's too late</p>
-                <p>Be warned at 80% of your daily allowance or a category budget.</p>
+                <p>Get alerts when you use 75%, 90% or 100% of a category budget, and when you go over your daily allowance.</p>
                 <div class="alert-notify" style="margin:16px 0 0; padding:12px; background:var(--bg)">
                     <h3 style="font-size:14px; margin:0">🚨 Shopping category</h3>
                     <p style="font-size:12px; margin:4px 0 0">You've used 83% of this month's budget.</p>
                 </div>
+            </div>
+            <button class="btn alt" onclick="scrollNext()">Next ➔</button>
+        </div>
+        <div class="feat-card">
+            <div>
+                <h3>📊 Understand your dashboards</h3>
+                <p style="color:var(--ink); font-weight:700; margin-bottom:8px">Know what each screen means</p>
+                <p><b>Plan</b> shows your monthly income allocation and goals. <b>Dashboard</b> summarises money and spending. <b>Daily</b> shows today's allowance and recent transactions. <b>Budgets</b> tracks category limits. <b>Invest</b> tracks portfolio values.</p>
             </div>
             <button class="btn alt" onclick="scrollNext()">Next ➔</button>
         </div>
@@ -360,7 +368,7 @@ body { overflow-x:hidden; }
     <div class="fab-container" id="fabs" style="display:none">
         <button class="fab fab-settings" aria-label="Settings" title="Settings" onclick="openSettings()">⚙️</button>
         <button id="chatFab" class="fab fab-chat" aria-label="AI Assistant" title="AI Assistant" onclick="showModal('chatModal')">💬</button>
-        <button class="fab" aria-label="Add expense" title="Add expense" onclick="showModal('addModal')">+</button>
+        <button class="fab" aria-label="Add daily expense" title="Add Daily Expense" data-tooltip="Add Daily Expense" onclick="showModal('addModal')">+</button>
     </div>
 </div>
 
@@ -382,6 +390,7 @@ body { overflow-x:hidden; }
             <div class="chat-body" id="chatBody">
                 <div class="msg ai">How can I help today?</div>
             </div>
+            <div style="padding:10px 16px 0"><button class="btn alt sm" style="width:100%;margin:0" onclick="toggleFaqs()">❔ Help &amp; Frequently Asked Questions</button><div id="faqPanel" style="display:none;margin-top:8px;gap:6px;flex-wrap:wrap"><button class="q-chip" onclick="helpFaq('How do I add an expense?')">Add an expense</button><button class="q-chip" onclick="helpFaq('What is the difference between Plan and Budgets?')">Plan vs Budgets</button><button class="q-chip" onclick="helpFaq('How is available balance calculated?')">Available balance</button><button class="q-chip" onclick="helpFaq('How do I add an investment?')">Add investment</button><button class="q-chip" onclick="helpFaq('How do I backup and restore data?')">Backup &amp; Restore</button><button class="q-chip" onclick="helpFaq('What do Essential, Lifestyle and Depends mean?')">Expense types</button></div></div>
             <div class="quick-chips">
                 <button class="q-chip" onclick="sendChip('🏠 Home Goal')">🏠 Home Goal</button>
                 <button class="q-chip" onclick="sendChip('📊 Budget')">📊 Budget</button>
@@ -751,7 +760,7 @@ function pl(){
     if(c.gs.length){
         h += '<div class="card"><h2>Growth Simulator 📊</h2><p class="mut">Adjust assumed return rate to see how compounding affects your required monthly savings.</p><div class="row" style="border:0; padding-bottom:0"><span>Rate: <b id="g_val_lbl">'+num(S.p.g)+'%</b></span><b style="color:var(--teal); font-size:18px" id="g_req_lbl">'+inr(c.gt)+'/mo</b></div><input type="range" min="0" max="15" step="1" value="'+num(S.p.g)+'" onchange="ugr(this.value)"></div>';
     }
-    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><p class="mut" style="margin-top:-6px">Build 2.1 (validation + 3 dashboards)</p><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
+    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><p class="mut" style="margin-top:-6px">Build 2.2 (13 consolidated updates)</p><p class="mut" style="font-size:11px">Financial data is stored in this browser profile on this device. Incognito and other browsers/devices have separate storage. Use Backup to move data between them.</p><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn alt" style="margin-top:10px" onclick="openHelpCentre()">❔ Help Centre &amp; FAQs</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button><button class="btn alt" style="background:#FCE8E8;color:#9B1C1C;border:1px solid #F3B8B8;margin-top:12px" onclick="deleteMyAccount()">🗑️ Delete My Account</button><p class="mut" style="font-size:11px;margin-top:8px">Reset clears this account\'s local financial data. Delete My Account also deletes your Firebase sign-in account.</p></div>';
     return h;
 }
 function ugr(v){ S.p.g=Math.min(100,Math.max(0,num(v))); save(); go('plan'); }
@@ -1228,5 +1237,133 @@ if('serviceWorker' in navigator && !(window.Capacitor && Capacitor.isNativePlatf
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
+
+<script>
+/* PiggySweep consolidated usability, validation and account controls – additive patch */
+(function(){
+  if(window.__psConsolidatedPatch) return; window.__psConsolidatedPatch=true;
+  function safeText(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});}
+
+  /* Item 1: local-first persistence clarity. Data is per browser profile/device; Incognito is isolated. */
+  var oldExport=window.exportData;
+  window.exportData=function(){ if(!activeUid){alert('Please sign in before creating a backup.');return;} oldExport(); };
+
+  /* Item 2: consistent numeric-only validation for every decimal/numeric input. */
+  document.addEventListener('input',function(e){
+    var el=e.target; if(!el || el.tagName!=='INPUT') return;
+    var mode=el.getAttribute('inputmode');
+    if(mode==='decimal' || el.hasAttribute('data-money')){
+      var v=el.value.replace(/[^0-9.]/g,''); var first=v.indexOf('.');
+      if(first>=0) v=v.slice(0,first+1)+v.slice(first+1).replace(/\./g,'');
+      var parts=v.split('.'); if(parts.length>1) v=parts[0]+'.'+parts[1].slice(0,2);
+      el.value=v.slice(0,12);
+    } else if(mode==='numeric') el.value=el.value.replace(/\D/g,'').slice(0,3);
+  },true);
+  document.addEventListener('blur',function(e){var el=e.target;if(el&&el.tagName==='INPUT'&&(el.inputMode==='decimal'||el.hasAttribute('data-money'))&&el.value!==''&&!/^\d+(\.\d{1,2})?$/.test(el.value)){el.setCustomValidity('Enter a valid amount with up to two decimal places.');el.reportValidity();el.value='';el.setCustomValidity('');}},true);
+
+  /* Item 3: app-aware browser Back/Forward navigation without logging out. */
+  var baseGo=window.go, navStack=[];
+  window.go=function(next){
+    if(window.__psPopHandling){return baseGo(next);}
+    if(activeUid && window.__appOn && tab && next!==tab){syncCustomCats();navStack.push(tab); if(navStack.length>30)navStack.shift(); try{history.pushState({piggysweep:true,tab:next},'','#'+next);}catch(e){}}
+    return baseGo(next);
+  };
+  window.addEventListener('popstate',function(){
+    if(!activeUid || !window.__appOn) return;
+    var previous=navStack.pop();
+    if(previous){window.__psPopHandling=true;try{baseGo(previous);}finally{window.__psPopHandling=false;}}
+    else {try{history.pushState({piggysweep:true,tab:tab},'','#'+tab);}catch(e){}}
+  });
+
+  /* Item 4: user-defined budget categories, persisted in the existing UID-scoped data object. */
+  S.bud=S.bud||{}; S.bud.custom=Array.isArray(S.bud.custom)?S.bud.custom:[];
+  function syncCustomCats(){
+    if(!Array.isArray(window.CAT)||!window.CT) return;
+    S.bud=S.bud||{}; S.bud.custom=Array.isArray(S.bud.custom)?S.bud.custom:[];
+    S.bud.custom.forEach(function(x){var key='custom_'+x.id;var existing=CAT.find(function(c){return c[0]===key;});if(existing){existing[2]=x.name;CT[key]=existing;}else{var row=[key,'🏷️',x.name,'some'];CAT.push(row);CT[key]=row;}});
+  }
+  syncCustomCats();
+  var baseDbcat=window.dbcat;
+  window.dbcat=function(){
+    syncCustomCats(); var html=baseDbcat();
+    var custom=S.bud.custom||[];
+    html=html.replace('</div><div class="card"><div class="row" style="border:0"><span>All budgets add up to',
+      (custom.length?custom.map(function(x){var k='custom_'+x.id,b=num(bd()[k]),sp=mspent()[k]||0,pct=b?sp/b*100:0;return '<div class="goal"><div class="row" style="border:0;padding:0;align-items:center"><input data-k="label" maxlength="40" value="'+safeText(x.name)+'" aria-label="Custom budget name" onchange="renameCustomBudget(\''+x.id+'\',this.value)"><button class="x" onclick="removeCustomBudget(\''+x.id+'\')" aria-label="Delete custom budget">✕</button></div><input inputmode="decimal" data-money value="'+safeText(bd()[k]===undefined?'':bd()[k])+'" placeholder="Monthly limit (₹)" onchange="sbud(\''+k+'\',this.value)" aria-label="'+safeText(x.name)+' monthly budget">'+(b?'<div class="mut">'+inr(sp)+' of '+inr(b)+' ('+(pct<10?pct.toFixed(1):Math.round(pct))+'%)</div>':'<div class="mut">No limit set</div>')+'</div>';}).join(''):'')+
+      '<div class="goal"><h3 style="margin-bottom:8px">＋ Add a custom budget</h3><input id="customBudgetName" data-k="label" maxlength="40" placeholder="Category name"><input id="customBudgetAmount" inputmode="decimal" data-money placeholder="Monthly limit (₹)" style="margin-top:8px"><button class="btn alt" style="margin-top:8px" onclick="addCustomBudget()">Add Budget</button></div></div><div class="card"><div class="row" style="border:0"><span>All budgets add up to');
+    return html;
+  };
+  window.addCustomBudget=function(){var n=$('customBudgetName'),a=$('customBudgetAmount');if(!n||!n.value.trim()){alert('Enter a category name.');return;}if(!a||!/^\d+(\.\d{1,2})?$/.test(a.value)||num(a.value)<=0){alert('Enter a monthly budget greater than zero.');return;}S.bud=S.bud||{};S.bud.custom=Array.isArray(S.bud.custom)?S.bud.custom:[];if(S.bud.custom.some(function(x){return x.name.toLowerCase()===n.value.trim().toLowerCase();})){alert('This budget category already exists.');return;}var id=String(Date.now());S.bud.custom.push({id:id,name:n.value.trim().slice(0,40)});S.bud['custom_'+id]=a.value;syncCustomCats();save();go('bud');};
+  window.removeCustomBudget=function(id){if(!confirm('Delete this custom budget category? Existing expense records will remain in your history.'))return;S.bud.custom=(S.bud.custom||[]).filter(function(x){return String(x.id)!==String(id)});delete S.bud['custom_'+id];save();go('bud');};
+  window.renameCustomBudget=function(id,name){name=String(name||'').trim().slice(0,40);if(!name){alert('A category name is required.');go('bud');return;}if((S.bud.custom||[]).some(function(x){return String(x.id)!==String(id)&&x.name.toLowerCase()===name.toLowerCase();})){alert('That category name already exists.');go('bud');return;}S.bud.custom.forEach(function(x){if(String(x.id)===String(id))x.name=name;});syncCustomCats();save();go('bud');};
+  var baseSbud=window.sbud; window.sbud=function(k,v){if(v!==''&&!/^\d+(\.\d{1,2})?$/.test(v)){alert('Enter a valid non-negative budget amount.');return;}return baseSbud(k,v);};
+
+  /* Item 5: show absolute return as well as percentage in dashboard summary. */
+  var baseDov=window.dov;
+  window.dov=function(){var h=baseDov();return h.replace(/Total return \(not per year\): <b([^>]*)>([\s\S]*?)<\/b>/,'Total return (not per year): <b$1>$2 · '+(function(){var A=S.inv||[],iv=0,cv=0;A.forEach(function(i){iv+=ivd(i);cv+=icv(i)});var g=cv-iv;return (g>=0?'+':'−')+inr(Math.abs(g));})()+'</b>');};
+
+  /* Item 6: avoid rounding small ratios to zero in key budget summaries. */
+  var baseDbcat2=window.dbcat;
+  window.dbcat=function(){return baseDbcat2().replace(/\((\d+)%\)/g,function(m,n){return '('+(Number(n)<10?Number(n).toFixed(1):n)+'%)';}).replace(/Share of your income<\/span><b>(\d+)%/g,function(m,n){var I=inc(),tb=0;CAT.forEach(function(c){tb+=bv(c[0]);});return 'Share of your income</span><b>'+(I>0&&tb/I*100<10?(tb/I*100).toFixed(1):n)+'%';});};
+
+  /* Item 7: ensure the Spend empty state opens the actual transaction form. */
+  var baseDba=window.dba; window.dba=function(){return baseDba().replace(/onclick="go\('today'\)"/g,'onclick="showModal(\'addModal\')"');};
+
+  /* Item 8: Firebase account deletion with recent-login reauthentication. */
+  window.deleteMyAccount=async function(){
+    var user=firebase&&firebase.auth?firebase.auth().currentUser:null;if(!user){alert('Please sign in again before deleting your account.');return;}
+    if(!confirm('Permanently delete your PiggySweep account? This deletes your Firebase sign-in account and this browser profile’s PiggySweep financial data. Export a backup first if you need one. This cannot be undone.'))return;
+    try{
+      try{await user.delete();}
+      catch(err){if(err.code!=='auth/requires-recent-login')throw err;var pw=prompt('For security, please enter your account password to confirm deletion:');if(!pw)return;var cred=firebase.auth.EmailAuthProvider.credential(user.email,pw);await user.reauthenticateWithCredential(cred);await user.delete();}
+      try{localStorage.removeItem('ps_v2_user_'+user.uid);localStorage.removeItem('ps_v2_user_migration_v1');}catch(e){}
+      await firebase.auth().signOut();activeUid='';K=LEGACY_K;S=dflt();window.__appOn=false;alert('Your PiggySweep account has been deleted.');goView('launchView');
+    }catch(e){alert('Account could not be deleted: '+(e&&e.message?e.message:'Please try again.'));}
+  };
+
+  /* Item 9: clarify category budget caps separately from profile planned spending. */
+  var basePl=window.pl;window.pl=function(){var h=basePl(),total=0;CAT.forEach(function(c){total+=bv(c[0]);});if(total>0){h=h.replace('<div class="card"><h2>Monthly Distribution</h2>','<div class="card"><h2>Monthly Distribution</h2><p class="mut">Profile spending is used in the monthly plan. Category budget limits are spending caps and are shown separately to avoid counting them twice.</p>');h=h.replace('<div class="row"><span>Planned spending</span><b>−'+inr(calc().needs)+'</b></div>','<div class="row"><span>Planned spending</span><b>−'+inr(calc().needs)+'</b></div><div class="row"><span>Category budget limits (caps)</span><b>'+inr(total)+'</b></div>');}return h;};
+
+  /* Item 10: contextual help, FAQs and assistant guidance. */
+  window.openHelpCentre=function(){showModal('chatModal');toggleFaqs(true);};
+  window.toggleFaqs=function(force){var p=$('faqPanel');if(!p)return;p.style.display=(force===true||p.style.display==='none')?'flex':'none';};
+  window.helpFaq=function(q){var input=$('chatInput');if(input)input.value=q;sendChat();};
+  var baseSendChat=window.sendChat;window.sendChat=function(){var input=$('chatInput'),q=input?input.value.trim().toLowerCase():'';var faqs=[
+    [/add an expense|log an expense|log a spend/,'Tap the + button, choose a category, enter the amount, select the date and expense type, then tap Save Expense. The transaction appears in Daily Expenses and the matching Spend period.'],
+    [/plan and budgets|plan vs budgets/,'Plan uses your profile income and planned monthly spending plus goals. Budgets sets category-wise spending limits. A budget is a cap, not an extra expense.'],
+    [/available balance/,'Available balance is your monthly income after planned spending and the larger of your goal requirement or savings plan. Actual spending is tracked separately.'],
+    [/add an investment/,'Open Invest, choose an asset type, enter its name, amount and start date, optionally add the institution and current value, then tap Save Asset.'],
+    [/backup|restore/,'Use Settings → Backup to download a JSON copy. Restore replaces the current account’s local financial data, so create a fresh backup first and only restore a file you trust.'],
+    [/essential|lifestyle|depends|mixed|need|want/,'Essential means necessary living costs. Lifestyle means optional purchases. Depends / Mixed means the expense can be essential or optional depending on context.'],
+    [/money habits score|score/,'The Money Habits Score is an educational indicator based on your entered savings, goals, spending and plan fit. It is not a credit score or financial advice.'],
+    [/daily expenses|calendar/,'Daily Expenses shows the month calendar. Select a date to see transactions recorded on that day. Use the floating + button to add an expense.'],
+    [/investment return|returns/,'Total return is current portfolio value minus invested amount. The percentage is that difference divided by invested amount. It is not an annualised return.']
+  ];
+  var match=null;faqs.some(function(x){if(x[0].test(q)){match=x[1];return true;}return false;});
+  if(!match)return baseSendChat();
+  var cb=$('chatBody');if(!cb)return baseSendChat();cb.innerHTML+='<div class="msg user">'+safeText(input.value)+'</div>';input.value='';cb.innerHTML+='<div class="msg ai">'+safeText(match)+'</div>';cb.scrollTop=cb.scrollHeight;
+  };
+
+  /* Item 11: rename Calendar to Daily Expenses; preserve date-based transaction view. */
+  var baseDcal=window.dcal;window.dcal=function(){var h=baseDcal();h=h.replace(/Calendar/g,'Daily Expenses').replace('Month total','Monthly expenses total');return h.replace('</h1>','</h1><p class="mut">Select a date to view expenses recorded on that day. Use the + button to add a daily expense.</p>');};
+  var baseDb=window.db;window.db=function(){var h=baseDb();return h.replace('Calendar</button>','Daily Expenses</button>');};
+  var baseFabShow=window.showModal;window.showModal=function(id){if(id==='addModal'&&$('modalContent')){var m=$('modalContent');m.innerHTML=addFormHtml();}return baseFabShow(id);};
+
+  /* Item 12: friendlier expense classifications; retain legacy storage keys for calculations. */
+  var baseAddForm=window.addFormHtml;window.addFormHtml=function(){return baseAddForm().replace(/>Need<\/button>/g,'>Essential<\/button>').replace(/>Want<\/button>/g,'>Lifestyle<\/button>').replace(/>Sometimes<\/button>/g,'>Depends / Mixed<\/button>').replace('Log a spend 🛒','Log a daily expense 🛒')+'<p class="mut" style="font-size:12px;margin-top:8px"><b>Essential:</b> necessary living costs. <b>Lifestyle:</b> optional spending. <b>Depends / Mixed:</b> varies by situation.</p>';};
+  var baseDcal2=window.dcal;window.dcal=function(){return baseDcal2().replace(/ · Need/g,' · Essential').replace(/ · Want/g,' · Lifestyle').replace(/ · Sometimes/g,' · Depends / Mixed');};
+  var baseTd=window.td;window.td=function(){return baseTd().replace(/ · 🟢 Need/g,' · Essential').replace(/ · 🟠 Want/g,' · Lifestyle').replace(/ · 🔵 Some/g,' · Depends / Mixed');};
+
+  /* Item 13: category budget warnings at 75/90/100/over, based on actual transactions. */
+  window.bwl=function(){var sp=mspent(),w=[];CAT.forEach(function(c){var b=bv(c[0]),v=sp[c[0]]||0;if(b>0){var pct=v/b*100;if(pct>=75){var level=pct>100?'OVER BUDGET':pct>=100?'LIMIT REACHED':pct>=90?'ALMOST EXHAUSTED':'APPROACHING LIMIT';w.push(c[1]+' '+c[2]+': '+level+' — '+Math.round(pct)+'% used ('+inr(v)+' of '+inr(b)+')'+(v>b?'; over by '+inr(v-b):''));}}});return w;};
+  window.bwarn=function(){var w=bwl();return w.length?'<div class="alert-notify"><h3>🚨 Budget alerts</h3><p>'+w.map(safeText).join('<br>')+'</p></div>':'';};
+  var baseDov2=window.dov;window.dov=function(){var h=baseDov2();return h.replace('<h1>My Money 📊</h1>','<h1>My Money 📊</h1>'+bwarn());};
+  var baseBdbb=window.dbb;window.dbb=function(){return baseBdbb().replace(/\((\d+)%\)/g,function(m,n){var v=Number(n);return '('+(v<10?v.toFixed(1):v)+'%)';});};
+
+  /* Add labels to app help affordances and a short storage/privacy note in help. */
+  var fab=document.querySelector('.fab[aria-label="Add daily expense"]');if(fab){fab.title='Add Daily Expense';fab.setAttribute('data-tooltip','Add Daily Expense');}
+  document.addEventListener('click',function(e){var t=e.target;if(t&&t.closest&&t.closest('.fab[aria-label="Add daily expense"]')){var m=$('modalContent');if(m&&m.innerHTML.indexOf('Essential')<0)m.innerHTML=addFormHtml();}},true);
+})();
+</script>
+
 </body>
 </html>
