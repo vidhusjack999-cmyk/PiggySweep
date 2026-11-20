@@ -1,24 +1,5 @@
-const CACHE_NAME = 'piggysweep-assets-v2';
-const CORE_ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting()));
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim()));
-});
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
-  if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).then(response => {
-      if (response && response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then(cache => cache.put('./index.html',copy)); }
-      return response;
-    }).catch(() => caches.match('./index.html')));
-    return;
-  }
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-    if (response && response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then(cache => cache.put(event.request,copy)); }
-    return response;
-  })));
-});
+const CACHE_NAME = 'piggysweep-assets-v3';
+const CORE_ASSETS = ['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./fonts/fonts.css','./fonts/plus-jakarta-sans-latin-400-normal.woff2','./fonts/plus-jakarta-sans-latin-500-normal.woff2','./fonts/plus-jakarta-sans-latin-600-normal.woff2','./fonts/plus-jakarta-sans-latin-700-normal.woff2','./fonts/plus-jakarta-sans-latin-800-normal.woff2','./vendor/firebase-app-compat.js','./vendor/firebase-auth-compat.js'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(CORE_ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;if(e.request.mode==='navigate'){e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok){const c=r.clone();caches.open(CACHE_NAME).then(x=>x.put('./index.html',c));}return r;}).catch(()=>caches.match('./index.html')));return;}e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(r=>{if(r&&r.ok){const cp=r.clone();caches.open(CACHE_NAME).then(x=>x.put(e.request,cp));}return r;})));});

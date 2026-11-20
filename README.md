@@ -1,34 +1,37 @@
-# PiggySweep PWA
+# PiggySweep
 
-PiggySweep is a mobile-first personal finance PWA packaged for Android with Capacitor.
+Mobile-first personal finance PWA with a Capacitor Android project.
 
-## Run locally
-Serve this folder from localhost (not by opening index.html as a file URL):
-
-```bash
-python -m http.server 8000
-```
-
-Open http://localhost:8000.
-
-## Android
-The Capacitor configuration uses `www` as its web asset directory. Keep `index.html`, `manifest.webmanifest`, `sw.js`, and the `icons` folder in sync with their copies under `www` before running `npx cap sync android`.
+## Project structure
+- `index.html`: GitHub Pages browser entry point.
+- `www/`: Capacitor web assets, synchronised with the root entry point.
+- `vendor/`: locally bundled Firebase Authentication compat SDK.
+- `fonts/`: locally bundled Plus Jakarta Sans font files.
+- `icons/`: PWA icons.
+- `sw.js`: browser service worker; registration is skipped in native Capacitor.
+- `android/`: Android Studio project.
 
 ## Authentication and data
-- Firebase Authentication uses email/password sign-in, account creation, and email-based password reset.
-- Firebase stores authentication identity/session information; PiggySweep financial records are stored locally in the browser/WebView under a UID-specific local-storage key.
-- Financial records are not uploaded to Firestore by this project.
-- Passwords are never included in PiggySweep JSON backups.
-- Local storage is not encrypted by default. Protect the device and keep exported backup files secure.
-- Remember Email is optional; passwords are not remembered by the app.
+- Firebase Authentication provides email/password sign-in.
+- Financial records are stored locally under a Firebase UID-specific key; they are not stored in Firestore.
+- JSON backups are manual, plain, unencrypted files. Store them securely.
+- Browser/device Local Storage is not encrypted by default.
+- Piggy AI is a rule-based assistant; an LLM backend is future work.
 
-## Backup and restore
-Backup exports the signed-in account's financial data as a JSON file. Restore imports a supported PiggySweep JSON backup into the currently signed-in account after confirmation. Keep backup files private.
+## GitHub Pages
+Publish root `index.html`, `manifest.webmanifest`, `sw.js`, and the `icons/`, `fonts/`, and `vendor/` folders. Configure Pages to deploy from `main` and `/ (root)`.
 
-## Deploy
-Upload the PWA web assets to the same directory on a static HTTPS host such as GitHub Pages. For Capacitor, copy the same updated web assets into `www` and sync the Android project.
+## Android
+From this folder run:
+```bash
+npm install
+npx cap sync android
+npx cap open android
+```
+Filesystem and Share plugins are included for native JSON backup sharing. `cap sync` copies `www/` into Android. Keep `androidScheme: "https"` stable after users save data because changing the app origin can make existing origin-scoped data inaccessible.
 
-## Copyright
-**PiggySweep™**  
-Designed & Developed by Vidyalakshmi Raghuraman  
-© 2026 Vidyalakshmi Raghuraman. All rights reserved.
+## Release checks
+- Configure Firebase Authentication authorized domains and restrict the Firebase web API key to required web referrers.
+- Test new-account signup, login, onboarding, logout/login, backup/restore, and second-account isolation.
+- Verify offline operation in airplane mode; offline support is not claimed as verified until tested.
+- Test native backup/share on an Android emulator and a real device.
