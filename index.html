@@ -268,7 +268,7 @@ body { overflow-x:hidden; }
 <div id="signupView" class="view">
   <div class="card" style="width:100%;max-width:380px;text-align:center;padding:32px 24px">
     <h1 style="margin-bottom:16px">Create Account ✨</h1>
-    <input class="auth-input" id="suName" type="text" placeholder="Your name" autocomplete="name" aria-label="Your name">
+    <input class="auth-input" id="suName" data-k="name" type="text" placeholder="Your name" autocomplete="name" aria-label="Your name">
     <input class="auth-input" id="suEmail" type="email" placeholder="Email address" autocomplete="email" autocapitalize="none" spellcheck="false" aria-label="Email address">
     <input class="auth-input" id="suPassword" type="password" placeholder="Password" autocomplete="new-password" aria-label="Password">
     <input class="auth-input" id="suConfirm" type="password" placeholder="Re-enter password" autocomplete="new-password" aria-label="Confirm password">
@@ -452,7 +452,7 @@ function loadUserData(user){
 
 var $ = function(i){return document.getElementById(i)};
 var inr = function(n){return '₹'+Math.round(n).toLocaleString('en-IN')};
-var num = function(v){return parseFloat(v)||0};
+var num = function(v){var n=parseFloat(v); return isFinite(n)&&n>0?Math.min(n,999999999.99):0};
 var day = function(d){var z=d.getTimezoneOffset()*60000;return new Date(d-z).toISOString().slice(0,10)};
 var esc = function(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
 
@@ -674,12 +674,12 @@ function hideModal(id) { $(id).classList.remove('show'); }
 
 /* --- Profile Onboarding --- */
 function st(k,v){S.p[k]=v; save()}
-function fl(l,v,f,ph,m){return '<label>'+l+'</label><input inputmode="'+(m||'decimal')+'" placeholder="'+(ph||'')+'" value="'+esc(v)+'" onchange="'+f+'">'}
+function fl(l,v,f,ph,m){return '<label>'+l+'</label><input inputmode="'+(m||'decimal')+'"'+(m==='text'?' data-k="name"':'')+' placeholder="'+(ph||'')+'" value="'+esc(v)+'" onchange="'+f+'">'}
 
 function nextStep(n) {
     if (qStep === 1) {
         var nm=(S.p.name||'').trim(), av=String(S.p.age||'').trim();
-        if(!nm){alert('Please enter your name.');return;}
+        if(!/^\p{L}[\p{L}\s.'’-]*$/u.test(nm)){alert('Please enter your name using letters only.');return;}
         if(!/^\d{1,3}$/.test(av) || Number(av)<13 || Number(av)>120){alert('Please enter a valid age between 13 and 120.');return;}
     }
     if (qStep === 2 && num(S.p.pay) <= 0) {
@@ -706,7 +706,7 @@ function pr(){
       nx=function(n){return '<button class="btn" onclick="nextStep('+n+')">Next</button>'},
       bk=function(n){return '<button class="btn alt sm" style="margin-top:12px" onclick="nextStep('+n+')">Back</button>'};
   if(qStep===1){
-    h+='<h1>Basic Details 👤</h1><div class="card">'+fl('What should we call you?',S.p.name,"st('name',this.value)",'Your name','text')+'<label for="profileAge">Your age</label><input id="profileAge" type="number" inputmode="numeric" pattern="[0-9]*" min="13" max="120" step="1" value="'+esc(S.p.age)+'" placeholder="e.g. 35" onchange="st(\'age\',this.value)">'+'<label>Gender (optional)</label><div class="chips wrap">'+['Male','Female','Other','Prefer not to say'].map(function(g){return '<button class="chip'+(S.p.gender===g?' on':'')+'" onclick="sgd(\''+g+'\')">'+g+'</button>'}).join('')+'</div><p class="mut" style="margin-top:10px">Age shows how old you will be when each goal ends. Gender is optional and is not used in any calculation.</p>'+nx(2)+'</div>';
+    h+='<h1>Basic Details 👤</h1><div class="card">'+fl('What should we call you?',S.p.name,"st('name',this.value)",'Your name','text')+'<label for="profileAge">Your age</label><input id="profileAge" type="text" inputmode="numeric" maxlength="3" value="'+esc(S.p.age)+'" placeholder="e.g. 35" onchange="st(\'age\',this.value)">'+'<label>Gender (optional)</label><div class="chips wrap">'+['Male','Female','Other','Prefer not to say'].map(function(g){return '<button class="chip'+(S.p.gender===g?' on':'')+'" onclick="sgd(\''+g+'\')">'+g+'</button>'}).join('')+'</div><p class="mut" style="margin-top:10px">Age shows how old you will be when each goal ends. Gender is optional and is not used in any calculation.</p>'+nx(2)+'</div>';
   } else if(qStep===2){
     h+='<h1>Income 💵</h1><div class="card">'+fl('Your monthly take-home pay (₹)',S.p.pay,"st('pay',this.value)",'e.g. 78000')+fl("Spouse's take-home pay (optional)",S.p.paySpouse,"st('paySpouse',this.value)",'e.g. 50000')+fl('Side or freelance income (optional)',S.p.paySide,"st('paySide',this.value)",'e.g. 10000')+nx(3)+bk(1)+'</div>';
   } else if(qStep===3){
@@ -714,7 +714,7 @@ function pr(){
   } else if(qStep===4){
     h+='<h1>How do you save? 💰</h1><p class="mut">Tap the ones you use or want to use, then enter a monthly amount. PiggySweep only tracks your choices. It does not recommend any of them.</p><div class="card"><div class="chips wrap">'+SVK.map(function(k){return '<button class="chip'+(k in S.p.sv?' on':'')+'" onclick="tsv(\''+k+'\')">'+k+'</button>'}).join('')+'</div>'+Object.keys(S.p.sv).map(function(k){return fl(k+' per month (₹)',S.p.sv[k],"sv('"+k+"',this.value)",'0')}).join('')+nx(5)+bk(3)+'</div>';
   } else {
-    h+='<h1>Goals 🎯</h1><p class="mut">Start with your main goal. You can add more any time.</p><div class="card">'+ge()+'</div><button class="btn" onclick="qStep=0; startApp()">Finish Setup</button>'+bk(4);
+    h+='<h1>Goals 🎯</h1><p class="mut">Start with your main goal. You can add more any time.</p><div class="card">'+ge()+'</div><button class="btn" onclick="finishSetup()">Finish Setup</button>'+bk(4);
   }
   return h;
 }
@@ -727,7 +727,7 @@ function ge(){
   var age=num(S.p.age);
   S.p.goals.forEach(function(x,i){
     var m=num(x.a)>0?need(num(x.a),num(x.y)||1,num(S.p.g)):0;
-    h+='<div class="goal"><div class="row" style="border:0;padding:0"><b>Goal '+(i+1)+'</b>'+(S.p.goals.length>1?'<button class="x" onclick="rg('+i+')">✕</button>':'')+'</div><label>What are you saving for?</label><input value="'+esc(x.n)+'" placeholder="e.g. House" onchange="ug('+i+',\'n\',this.value)"><div class="two"><div><label>Target (₹)</label><input inputmode="decimal" value="'+esc(x.a)+'" onchange="ug('+i+',\'a\',this.value)"></div><div><label>Years</label><input inputmode="decimal" value="'+esc(x.y)+'" onchange="ug('+i+',\'y\',this.value)"></div></div>'+(m?'<p class="mut" style="margin:8px 0 0">Needs <b>'+inr(m)+'/mo</b>'+(age>0&&num(x.y)>0?' · You will be '+Math.round(age+num(x.y))+' by then':'')+'</p>':'')+'</div>';
+    h+='<div class="goal"><div class="row" style="border:0;padding:0"><b>Goal '+(i+1)+'</b>'+(S.p.goals.length>1?'<button class="x" onclick="rg('+i+')">✕</button>':'')+'</div><label>What are you saving for?</label><input data-k="label" value="'+esc(x.n)+'" placeholder="e.g. House" onchange="ug('+i+',\'n\',this.value)"><div class="two"><div><label>Target (₹)</label><input inputmode="decimal" value="'+esc(x.a)+'" onchange="ug('+i+',\'a\',this.value)"></div><div><label>Years</label><input data-max="60" inputmode="decimal" value="'+esc(x.y)+'" onchange="ug('+i+',\'y\',this.value)"></div></div>'+(m?'<p class="mut" style="margin:8px 0 0">Needs <b>'+inr(m)+'/mo</b>'+(age>0&&num(x.y)>0?' · You will be '+Math.round(age+num(x.y))+' by then':'')+'</p>':'')+'</div>';
   });
   return h+(S.p.goals.length<4?'<button class="btn alt" onclick="ag()">+ Add goal</button>':'');
 }
@@ -754,7 +754,7 @@ function pl(){
     h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
     return h;
 }
-function ugr(v){ S.p.g=v; save(); go('plan'); }
+function ugr(v){ S.p.g=Math.min(100,Math.max(0,num(v))); save(); go('plan'); }
 
 function dn(segs,base,a,b){
   var C=2*Math.PI*70,off=0,arcs='';
@@ -792,83 +792,47 @@ function scoreCard(){
   return h;
 }
 function dov(){
-  var I = calc().totalInc;
-  var h = '<h1>My Money 📊</h1>';
-  
-  h += scoreCard();
-
-  // CARD 1: Income Allocation
-  var needs = calc().needs;
-  var svSum = 0;
-  var goals = calc().sav;
-  var flex = Math.max(0, I - (needs + goals));
-  
-  var allocSegs = [];
-  if(needs > 0) allocSegs.push({l:'🏠 Needs', v:needs, c:'#38bdf8'});
-  if(goals > 0) allocSegs.push({l:'🎯 Goals & savings', v:goals, c:'#8b5cf6'});
-  if(flex > 0) allocSegs.push({l:'🛍️ Wants / Flex', v:flex, c:'#f59e0b'});
-  
-  var used = needs + goals;
-  var allocBase = Math.max(I, used);
-  
-  h += '<div class="card"><h2>Monthly Income: <span style="color:var(--teal)">'+inr(I)+'</span></h2><p class="mut" style="margin-top:-8px">Income Allocation Plan</p>';
-  
-  if(I <= 0) {
-      h += '<p>Add your income in the Profile tab.</p>';
-  } else {
-      if(used > I) h+='<div class="alert-notify" style="padding:12px; margin-bottom:16px"><p style="margin:0; color:var(--warn-txt)">💡 Your planned needs and savings add up to '+inr(used)+', which is '+inr(used-I)+' more than your income.</p></div>';
-      
-      h += dn(allocSegs, allocBase, '100%', 'Allocated');
-      allocSegs.forEach(function(s){
-          var pc = (s.v/allocBase)*100;
-          h += '<div class="row"><span><i class="dot" style="background:'+s.c+'"></i>'+esc(s.l)+'</span><span><b>'+inr(s.v)+'</b> <span class="mut" style="display:inline-block; width:40px; text-align:right">'+Math.round(pc)+'%</span></span></div>';
-      });
-  }
-  h += '</div>';
-
-  // CARD 2: Total Investments Snapshot
-  var A=S.inv || [], inv=0, cur=0;
-  A.forEach(function(i){inv+=ivd(i); cur+=icv(i);});
-  if(A.length > 0) {
-      var g = cur - inv, gp = inv>0 ? (g/inv)*100 : 0;
-      h += '<div class="card"><h2>Total Investments</h2><p class="mut" style="margin-top:-8px">Current portfolio performance</p>';
-      h += '<div class="two" style="margin-bottom:12px"><div><div class="mut" style="font-size:12px">Invested</div><div style="font-size:18px; font-weight:800">'+inr(inv)+'</div></div><div style="text-align:right"><div class="mut" style="font-size:12px">Current Value</div><div style="font-size:18px; font-weight:800; color:var(--teal)">'+inr(cur)+'</div></div></div>';
-      h += '<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.04); padding:12px; border-radius:12px"><div><div style="font-size:12px; opacity:0.85; font-weight:700">Total return (not per year)</div><div style="font-size:18px; font-weight:800; color:var(--'+(g>=0?'teal':'warn-txt')+')">'+(g>=0?'+':'-')+Math.abs(gp).toFixed(1)+'%</div></div><div style="text-align:right; font-size:15px; font-weight:800; color:var(--'+(g>=0?'teal':'warn-txt')+')">'+(g>=0?'▲ ':'▼ ')+inr(Math.abs(g))+'</div></div>';
-      
-      var by={}; A.forEach(function(i){by[i.ty]=(by[i.ty]||0)+icv(i)});
-      var ast=Object.keys(by).map(function(k){return {k:k,v:by[k]}}).sort(function(a,b){return b.v-a.v});
-      var PAL_INV=['#38bdf8','#f59e0b','#ef4444','#ec4899','#10b981','#8b5cf6'];
-      
-      h += '<div class="bar" style="margin:12px 0 8px; height:8px">';
-      ast.forEach(function(a, i){ h+= '<i style="background:'+PAL_INV[i%PAL_INV.length]+'; width:'+(a.v/cur*100)+'%"></i>'; });
-      h += '</div><div style="display:flex; gap:8px; font-size:12px; overflow-x:auto" class="mut">';
-      ast.slice(0,3).forEach(function(a, i){ var t=IT[a.k]||IT.oth; h+='<span style="white-space:nowrap"><i class="dot" style="width:8px; height:8px; background:'+PAL_INV[i%PAL_INV.length]+'"></i>'+t[1]+' '+t[2]+'</span>'; });
-      h += '</div></div>';
-  } else {
-      h += '<div class="card"><h2>Total Investments</h2><p class="mut" style="margin-bottom:12px">No investments recorded yet.</p><button class="btn alt sm" onclick="go(\'inv\')">Add Investments ➔</button></div>';
-  }
-  
-  // CARD 3: Spending Analytics (Actuals)
-  var r=day(new Date()).slice(0,7);
-  var curTx=S.tx.filter(function(t){return t.d.slice(0,7)===r});
-  var tc=sumTx(curTx);
-  
-  h+='<div class="card"><h2>Spending Analytics</h2><p class="mut" style="margin-top:-8px">Actual spends this month</p>';
-  h+='<div class="big" style="font-size:36px; margin: 8px 0">'+inr(tc)+'</div>';
-  if(I>0) h+='<div class="bar"><i style="background:var(--grad);width:'+Math.min(100,tc/I*100)+'%"></i></div><p class="mut">'+Math.round(tc/I*100)+'% of Monthly Income</p>';
-  
-  var cs={}; curTx.forEach(function(t){var c=t.c||'other'; cs[c]=(cs[c]||0)+t.a});
-  var segsAct=Object.keys(cs).map(function(k){return {k:k,v:cs[k]}}).sort(function(a,b){return b.v-a.v});
-  var PAL_ACT=['#38bdf8','#f59e0b','#ef4444','#ec4899','#10b981','#8b5cf6'];
-  segsAct.forEach(function(x,i){var c=CT[x.k]||CT.other; x.l=c[1]+' '+c[2]; x.c=PAL_ACT[i%PAL_ACT.length]});
-  
-  h += dn(segsAct, tc, inr(tc), 'Spent');
-  
-  if(tc===0) h+='<p class="mut" style="text-align:center">No spending logged.</p>';
-  segsAct.forEach(function(x){var pc=x.v/tc*100; h+='<div class="row"><span><i class="dot" style="background:'+x.c+'"></i>'+esc(x.l)+'</span><span><b>'+inr(x.v)+'</b> <span class="mut" style="display:inline-block; width:40px; text-align:right">'+Math.round(pc)+'%</span></span></div>'});
+  var c=calc(), I=c.totalInc, h='<h1>My Money 📊</h1>'+scoreCard();
+  if(I<=0) return h+'<div class="card"><p>Add your income in the Profile tab.</p></div>';
+  var mk=day(new Date()).slice(0,7), sp=mspent(), tc=sumTx(S.tx.filter(function(t){return t.d.slice(0,7)===mk}));
+  var rows=[];
+  CAT.forEach(function(x){var p=bv(x[0]),a=sp[x[0]]||0; if(p>0||a>0) rows.push({l:x[1]+' '+x[2],p:p,a:a,t:x[3]});});
+  var fx=num(S.p.fix)+num(S.p.vr); if(fx>0) rows.push({l:'📌 Other fixed needs',p:fx,a:0,t:'need'});
+  var plan=rows.reduce(function(s,r){return s+r.p},0);
+  var segs=rows.filter(function(r){return r.p>0}).map(function(r){return {l:r.l,v:r.p}});
+  Object.keys(S.p.sv||{}).forEach(function(k){if(num(S.p.sv[k])>0) segs.push({l:'💰 '+k,v:num(S.p.sv[k])});});
+  if(c.gt>c.svSum) segs.push({l:'🎯 Extra for goals',v:c.gt-c.svSum});
+  var used=segs.reduce(function(s,r){return s+r.v},0), free=I-used;
+  if(free>0) segs.push({l:'🛍️ Free to spend',v:free});
+  var base=Math.max(I,used); segs.forEach(function(s,k){s.c=PAL[k%PAL.length]});
+  var nd=0,wt=0; rows.forEach(function(r){if(r.t==='need') nd+=r.p; else wt+=r.p;});
+  var sh=function(v){return (v/I*100).toFixed(2).replace(/\.?0+$/,'')};
+  h+='<div class="card"><h2>My Money</h2><div class="two">'+[['Monthly income',I],['Total expenses',plan],['Savings & goals',c.sav],['Available balance',free]].map(function(x){return '<div style="margin-bottom:10px"><div class="mut" style="font-size:12px">'+x[0]+'</div><b style="font-size:18px">'+(x[1]<0?'−':'')+inr(Math.abs(x[1]))+'</b></div>'}).join('')+'</div><h2 style="margin-top:8px">Where does your income go?</h2>'+[['Needs',nd,'#38bdf8'],['Wants / Travel / Shopping',wt,'#f59e0b'],['Goals & savings',c.sav,'#8b5cf6'],[free>=0?'Available balance':'Over budget',Math.abs(free),free>=0?'#10b981':'#ef4444']].map(function(x){return '<div class="row" style="border:0;padding:6px 0 0"><span>'+x[0]+'</span><b>'+sh(x[1])+'%</b></div><div class="bar" style="margin:4px 0 6px"><i style="background:'+x[2]+';width:'+Math.min(100,x[1]/I*100)+'%"></i></div>'}).join('')+'</div>';
+  var pc=function(v){return (v/I*100).toFixed(v/I<0.1?1:0)+'%'};
+  h+='<div class="card"><h2>Where your income goes</h2><p class="mut" style="margin-top:-8px">Monthly income '+inr(I)+'. Every category as a share of income.</p>';
+  if(used>I) h+='<div class="alert-notify" style="padding:12px"><p style="margin:0;color:var(--warn-txt)">💡 Planned spending and savings add up to '+inr(used)+', which is '+inr(used-I)+' more than your income.</p></div>';
+  h+=dn(segs,base,Math.round(used/I*100)+'%','of income planned');
+  segs.slice().sort(function(a,b){return b.v-a.v}).forEach(function(s){h+='<div class="row"><span><i class="dot" style="background:'+s.c+'"></i>'+esc(s.l)+'</span><span><b>'+inr(s.v)+'</b> <span class="mut" style="display:inline-block;width:44px;text-align:right">'+pc(s.v)+'</span></span></div>'});
   h+='</div>';
-  
-  return h;
+  var al=[];
+  rows.forEach(function(r){[['plan',r.p],['act',r.a]].forEach(function(z){
+    if(z[1]/I<0.3) return;
+    var oth=plan-r.p, room=Math.max(0,I-oth-c.sav);
+    al.push('<b>'+esc(r.l)+'</b> '+(z[0]==='plan'?'is planned at ':'has taken ')+Math.round(z[1]/I*100)+'% of your income'+(z[0]==='act'?' this month':'')+'. Your other spending ('+inr(oth)+') and goals & savings ('+inr(c.sav)+') need '+inr(oth+c.sav)+'. '+(z[1]<=room?'It still fits, with little room to spare.':'To cover living costs and goals, keep it within about '+inr(room)+' ('+Math.round(room/I*100)+'% of income).'));
+  });});
+  if(al.length) h+='<div class="alert-notify"><h3>⚠️ One category is taking a big share</h3><p>'+al.join('<br><br>')+'</p></div>';
+  h+='<div class="card"><h2>Spent this month</h2><p class="mut" style="margin-top:-8px">Actual spends as a share of income, next to your plan.</p><div class="big" style="font-size:32px">'+inr(tc)+'</div><div class="bar"><i style="background:var(--grad);width:'+Math.min(100,tc/I*100)+'%"></i></div><p class="mut">'+pc(tc)+' of monthly income</p>';
+  if(!tc) h+='<p class="mut">No spending logged this month.</p>';
+  rows.filter(function(r){return r.a>0}).sort(function(a,b){return b.a-a.a}).forEach(function(r){h+='<div class="row"><span>'+esc(r.l)+'</span><span><b>'+inr(r.a)+'</b> <span class="mut">'+pc(r.a)+' of income'+(r.p>0?' · plan '+pc(r.p):'')+'</span></span></div>'});
+  h+='</div>';
+  var A=S.inv||[],inv=0,cur=0; A.forEach(function(i){inv+=ivd(i);cur+=icv(i)});
+  h+='<div class="card"><h2>Investments 💼</h2>';
+  if(!A.length) return h+'<p class="mut" style="margin-bottom:12px">No investments recorded yet.</p><button class="btn alt sm" onclick="go(\'inv\')">Add Investments ➔</button></div>';
+  var g=cur-inv, gp=inv>0?g/inv*100:0, by={}; A.forEach(function(i){by[i.ty]=(by[i.ty]||0)+icv(i)});
+  h+='<div class="two"><div><div class="mut" style="font-size:12px">Invested</div><b>'+inr(inv)+'</b></div><div style="text-align:right"><div class="mut" style="font-size:12px">Current value</div><b style="color:var(--teal)">'+inr(cur)+'</b></div></div><p class="mut" style="margin-top:8px">Total return (not per year): <b style="color:var(--'+(g>=0?'teal':'warn-txt')+')">'+(g>=0?'+':'-')+Math.abs(gp).toFixed(1)+'%</b></p>';
+  var ast=Object.keys(by).map(function(k){return {k:k,v:by[k]}}).sort(function(a,b){return b.v-a.v});
+  ast.forEach(function(a,k){var t=IT[a.k]||IT.oth; h+='<div class="row"><span><i class="dot" style="background:'+PAL[k%PAL.length]+'"></i>'+t[1]+' '+t[2]+'</span><span><b>'+inr(a.v)+'</b> <span class="mut" style="display:inline-block;width:44px;text-align:right">'+Math.round(a.v/cur*100)+'%</span></span></div>'});
+  return h+'</div>';
 }
 
 function rng(){
@@ -892,20 +856,31 @@ function chart(v,l,area){
   var st=Math.ceil(n/8); l.forEach(function(x,i){if(i%st===0) s+='<text x="'+(P+bw*i+bw/2).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">'+x+'</text>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Spending chart"><defs><linearGradient id="br" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#DB2777"/></linearGradient><linearGradient id="ar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C3AED" stop-opacity=".45"/><stop offset="1" stop-color="#7C3AED" stop-opacity="0"/></linearGradient></defs><line x1="'+P+'" y1="'+(H-24)+'" x2="'+(W-P)+'" y2="'+(H-24)+'" stroke="currentColor" opacity=".2"/>'+s+'<text x="'+P+'" y="12" font-size="11" fill="currentColor" opacity=".8">Highest '+inr(mx>1?mx:0)+'</text></svg>';
 }
+var cmpOpen=false;
+function ibase(){var n=new Date(),I=inc(); if(pd==='week') return I*12/52; if(pd==='year') return I*(n.getMonth()+n.getDate()/new Date(n.getFullYear(),n.getMonth()+1,0).getDate()); return I;}
 function dba(){
-  var r=rng(),cur=S.tx.filter(function(t){return ins(t,r.cs,r.ce)}),prv=S.tx.filter(function(t){return ins(t,r.ps,r.pe)}),tc=sumTx(cur),tp=sumTx(prv),
+  var r=rng(),cur=S.tx.filter(function(t){return ins(t,r.cs,r.ce)}),prv=S.tx.filter(function(t){return ins(t,r.ps,r.pe)}),tc=sumTx(cur),tp=sumTx(prv),ib=ibase(),
   h='<h1>Spend analysis 📊</h1><div class="chips" style="margin:0 0 12px">'+[['week','Week'],['month','Month'],['year','Year']].map(function(x){return '<button class="chip'+(pd===x[0]?' on':'')+'" onclick="spd(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
   if(!tc) return h+'<div class="card"><p>No spends logged for this '+r.nm+' yet.</p><button class="btn" onclick="go(\'today\')">Log a spend</button></div>';
-  var s=series(),ch=tp>0?(tc-tp)/tp*100:null;
-  h+='<div class="card"><p class="mut" style="margin:0">Spent this '+r.nm+'</p><div class="big" style="font-size:34px">'+inr(tc)+'</div><p style="margin:4px 0 0;font-weight:700;color:var(--'+(ch>0?'amb':'teal')+')">'+(ch==null?'No earlier data to compare':(ch>0?'▲ ':'▼ ')+Math.abs(Math.round(ch))+'% '+(ch>0?'higher':'lower')+' than '+r.cmp)+'</p><div style="color:var(--ink);margin-top:10px">'+chart(s.v,s.l,pd==='month')+'</div></div>';
-  if(pd==='month'&&inc()>0) h+='<div class="card"><h2>Income vs spent</h2><div class="row" style="border:0"><span>Income</span><b>'+inr(inc())+'</b></div><div class="bar"><i style="background:var(--grad);width:100%"></i></div><div class="row" style="border:0"><span>Spent so far</span><b>'+inr(tc)+' ('+Math.round(tc/inc()*100)+'%)</b></div><div class="bar"><i style="background:var(--amb);width:'+Math.min(100,tc/inc()*100)+'%"></i></div></div>';
-  var cs={},cp={}; cur.forEach(function(t){var c=t.c||'other'; cs[c]=(cs[c]||0)+t.a}); prv.forEach(function(t){var c=t.c||'other'; cp[c]=(cp[c]||0)+t.a});
+  var s=series(),ch=tp>0?(tc-tp)/tp*100:null,cs={},cp={};
+  cur.forEach(function(t){var c=t.c||'other'; cs[c]=(cs[c]||0)+t.a}); prv.forEach(function(t){var c=t.c||'other'; cp[c]=(cp[c]||0)+t.a});
+  h+='<div class="card"><p class="mut" style="margin:0">Spent this '+r.nm+'</p><div class="big" style="font-size:34px">'+inr(tc)+'</div>'+(ib>0?'<p class="mut" style="margin:2px 0 0">'+Math.round(tc/ib*100)+'% of '+(pd==='month'?'monthly income':'income for this '+r.nm+' (approx.)')+'</p>':'')+'<div style="color:var(--ink);margin-top:10px">'+chart(s.v,s.l,pd==='month')+'</div><button class="btn alt sm" style="margin-top:10px" aria-expanded="'+cmpOpen+'" onclick="cmpOpen=!cmpOpen;go(\'dash\')">⇄ '+(cmpOpen?'Hide comparison':'Compare with previous '+r.nm)+'</button></div>';
+  if(cmpOpen){
+    h+='<div class="card"><h2>This '+r.nm+' vs '+r.cmp+'</h2>';
+    if(!prv.length) h+='<p class="mut">No spending was logged for '+r.cmp+', so there is nothing to compare yet. Keep logging and this will fill in.</p>';
+    else{
+      h+='<div class="two"><div><div class="mut" style="font-size:12px">This '+r.nm+'</div><b>'+inr(tc)+'</b></div><div style="text-align:right"><div class="mut" style="font-size:12px">Previous</div><b>'+inr(tp)+'</b></div></div><p style="font-weight:700;color:var(--'+(ch>0?'amb':'teal')+')">'+(ch>0?'▲ ':ch<0?'▼ ':'')+Math.abs(ch).toFixed(1)+'% '+(ch>0?'higher':ch<0?'lower':'(no change)')+' ('+(tc>=tp?'+':'−')+inr(Math.abs(tc-tp))+')</p>';
+      Object.keys(cs).concat(Object.keys(cp).filter(function(k){return !(k in cs)})).forEach(function(k){var a=cs[k]||0,p=cp[k]||0,c=CT[k]||CT.other,d=p>0?(a-p)/p*100:null; h+='<div class="row"><span>'+c[1]+' '+c[2]+'</span><span><b>'+inr(a)+'</b> <span class="mut">vs '+inr(p)+' · '+(d==null?'new':(d>0?'▲':d<0?'▼':'')+Math.abs(d).toFixed(0)+'%')+'</span></span></div>'});
+    }
+    h+='<p class="mut" style="margin-top:8px">Compares the same number of days in each period.</p></div>';
+  }
   var segs=Object.keys(cs).map(function(k){return {k:k,v:cs[k]}}).sort(function(a,b){return b.v-a.v});
   segs.forEach(function(x,i){var c=CT[x.k]||CT.other; x.l=c[1]+' '+c[2]; x.c=PAL[i%PAL.length]});
   h+='<div class="card"><h2>By category</h2>'+dn(segs,tc,'100%','of '+inr(tc));
-  segs.forEach(function(x){var p=cp[x.k]||0,c2=p>0?Math.round((x.v-p)/p*100):null,pc=x.v/tc*100; h+='<div class="row"><span><i class="dot" style="background:'+x.c+'"></i>'+esc(x.l)+'</span><span><b>'+inr(x.v)+'</b> <span class="mut">'+(pc<10?pc.toFixed(1):Math.round(pc))+'%'+(c2==null?'':' · '+(c2>0?'▲':'▼')+Math.abs(c2)+'%')+'</span></span></div>'});
-  return h+'</div><p class="mut">▲ ▼ compare each category with '+r.cmp+'.</p>';
+  segs.forEach(function(x){var sh=x.v/tc*100,ic=ib>0?x.v/ib*100:null,hi=ic!=null&&ic>=30; h+='<div class="row"><span><i class="dot" style="background:'+x.c+'"></i>'+esc(x.l)+(hi?' <span class="chip on w" style="padding:2px 8px;font-size:11px;flex:none">High</span>':'')+'</span><span style="text-align:right"><b>'+inr(x.v)+'</b><br><span class="mut" style="font-size:12px">'+(sh<10?sh.toFixed(1):Math.round(sh))+'% of spend'+(ic==null?'':' · '+(ic<10?ic.toFixed(1):Math.round(ic))+'% of income')+'</span></span></div>'});
+  return h+'</div><p class="mut">"High" means 30% or more of your income.</p>';
 }
+
 var SPMAP={groc:'groceries',med:'medical',travel:'travel',shop:'shopping',bills:'bills',edu:'edu',rent:'rent',emi:'emi',other:'other'};
 function bd(){return S.bud||(S.bud={})}
 function bv(k){var b=bd()[k]; if(b!==undefined&&b!=='') return num(b); return SPMAP[k]?num((S.p.sp||{})[SPMAP[k]]):0}
@@ -1031,7 +1006,7 @@ function addFormHtml() {
     return '<div class="row" style="border:0; padding:0 0 16px"><h2 style="margin:0">Log a spend 🛒</h2><button class="x" onclick="hideModal(\'addModal\')">✕</button></div>' +
     '<div class="cats">'+CAT.map(function(c){return '<button class="cat'+(cat===c[0]?' on':'')+'" onclick="pick(\''+c[0]+'\')"><span>'+c[1]+'</span>'+c[2]+'</button>'}).join('')+'</div>' +
     '<input id="amt" inputmode="decimal" placeholder="Amount (₹)" style="font-size:24px; padding:16px; margin: 8px 0"><div style="height:8px"></div>' +
-    '<input id="note" placeholder="What was it? (optional)"><label>Date</label>' +
+    '<input id="note" data-k="label" placeholder="What was it? (optional)"><label>Date</label>' +
     '<input id="dt" type="date" value="'+T+'" max="'+T+'">' +
     '<div class="chips">'+[['need','Need'],['want','Want'],['some','Sometimes']].map(function(t){return '<button class="chip'+(tag===t[0]?' on'+(t[0]==='want'?' w':''):'')+'" onclick="tg(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>' +
     '<button class="btn" onclick="addTx()">Save Expense</button>';
@@ -1040,7 +1015,8 @@ function kfm(fn){var a=$('amt')?$('amt').value:'',b=$('note')?$('note').value:''
 function pick(c){kfm(function(){cat=c; tag=CT[c][3]})}
 function tg(t){kfm(function(){tag=t})}
 function addTx(){
-    var a=num($('amt').value); if(a<=0){ $('amt').focus(); return; }
+    var a=num($('amt').value); if(a<=0){ alert('Enter an amount greater than 0.'); $('amt').focus(); return; }
+    var dtv=$('dt').value; if(dtv&&dtv>day(new Date())){alert('The date cannot be in the future.');return;}
     S.tx.push({id:Date.now(),d:$('dt').value||day(new Date()),a:a,t:$('note').value.trim(),g:tag,c:cat}); 
     save(); hideModal('addModal'); go(tab);
 }
@@ -1117,21 +1093,21 @@ function iv(){
     h+='<div class="card"><h2>Your Holdings</h2>';
     A.slice().reverse().forEach(function(i){
         var t=IT[i.ty]||IT.oth;
-        h+='<div class="goal"><div class="row" style="border:0; padding:0; align-items:center"><span><span class="ic">'+t[1]+'</span><b>'+esc(i.n)+'</b><br><span class="mut" style="margin-left:44px">'+t[2]+' · '+(i.m?inr(num(i.a))+'/mo':'on '+esc(i.d))+'</span></span><b>'+inr(ivd(i))+'</b></div><div class="two" style="margin-top:6px"><div><label>Current Value (₹)</label><input inputmode="decimal" value="'+esc(i.cv)+'" placeholder="'+Math.round(ivd(i))+'" onchange="ucv('+i.id+',this.value)"></div><div style="display:flex; align-items:flex-end"><button class="btn alt sm" style="width:100%; padding:14px" onclick="delInv('+i.id+')">Remove</button></div></div></div>';
+        h+='<div class="goal"><div class="row" style="border:0; padding:0; align-items:center"><span><span class="ic">'+t[1]+'</span><b>'+esc(i.n)+'</b><br><span class="mut" style="margin-left:44px">'+t[2]+(i.b?' · '+esc(i.b):'')+' · '+(i.m?inr(num(i.a))+'/mo':'on '+esc(i.d))+'</span></span><b>'+inr(ivd(i))+'</b></div><div class="two" style="margin-top:6px"><div><label>Current Value (₹)</label><input inputmode="decimal" value="'+esc(i.cv)+'" placeholder="'+Math.round(ivd(i))+'" onchange="ucv('+i.id+',this.value)"></div><div style="display:flex; align-items:flex-end"><button class="btn alt sm" style="width:100%; padding:14px" onclick="delInv('+i.id+')">Remove</button></div></div></div>';
     });
     h+='</div>';
   } else {
     h+='<div class="card"><p class="mut">No assets recorded yet.</p></div>';
   }
   
-  h+='<div class="card"><h2>Add Asset</h2><select id="in_ty" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,0.5); margin-bottom:12px; font-family:inherit; font-weight:700; font-size:16px;">'+ITY.map(function(t){return '<option value="'+t[0]+'">'+t[1]+' '+t[2]+'</option>'}).join('')+'</select><input id="in_n" placeholder="Asset name (e.g. 5-year FD)" style="margin-bottom:12px"><select id="in_m" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,0.5); margin-bottom:12px; font-family:inherit; font-weight:700; font-size:16px;"><option value="0">One-time Investment</option><option value="1">Monthly (SIP / RD)</option></select><input id="in_a" inputmode="decimal" placeholder="Amount (₹)" style="margin-bottom:12px"><label>Start Date</label><input id="in_d" type="date" value="'+T+'" max="'+T+'" style="margin-bottom:12px"><label>Current Value (₹, optional)</label><input id="in_c" inputmode="decimal" placeholder="Leave blank for cost basis"><button class="btn" onclick="addInv()">Save Asset</button></div>';
+  h+='<div class="card"><h2>Add Asset</h2><select id="in_ty" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,0.5); margin-bottom:12px; font-family:inherit; font-weight:700; font-size:16px;">'+ITY.map(function(t){return '<option value="'+t[0]+'">'+t[1]+' '+t[2]+'</option>'}).join('')+'</select><input id="in_n" data-k="label" placeholder="Asset name (e.g. 5-year FD)" style="margin-bottom:12px"><input id="in_b" data-k="label" placeholder="Institution / bank (optional)" style="margin-bottom:12px"><select id="in_m" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,0.5); margin-bottom:12px; font-family:inherit; font-weight:700; font-size:16px;"><option value="0">One-time Investment</option><option value="1">Monthly (SIP / RD)</option></select><input id="in_a" inputmode="decimal" placeholder="Amount (₹)" style="margin-bottom:12px"><label>Start Date</label><input id="in_d" type="date" value="'+T+'" max="'+T+'" style="margin-bottom:12px"><label>Current Value (₹, optional)</label><input id="in_c" inputmode="decimal" placeholder="Leave blank for cost basis"><button class="btn" onclick="addInv()">Save Asset</button></div>';
   return h;
 }
 function addInv(){
-    var a=num($('in_a').value); if(a<=0) return; 
+    var a=num($('in_a').value); if(a<=0){alert('Enter an amount greater than 0.');return;} if($('in_c').value!==''&&!/^\d+(\.\d{1,2})?$/.test($('in_c').value)){alert('Current value must be a valid number.');return;} if($('in_d').value>day(new Date())){alert('The start date cannot be in the future.');return;} 
     var ty=$('in_ty').value; var t=IT[ty]; 
     var m=($('in_m').value==='1');
-    S.inv.push({id:Date.now(), ty:ty, n:$('in_n').value.trim()||t[2], a:a, m:m, d:$('in_d').value||day(new Date()), cv:$('in_c').value}); 
+    S.inv.push({id:Date.now(), ty:ty, n:$('in_n').value.trim()||t[2], a:a, m:m, d:$('in_d').value||day(new Date()), cv:$('in_c').value, b:$('in_b').value.trim()}); 
     save(); go('inv');
 }
 function ucv(id,v){ S.inv.forEach(function(i){if(i.id===id) i.cv=v}); save(); go('inv'); }
@@ -1182,6 +1158,21 @@ function importData(e) {
 }
 function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); location.reload();}}
 
+function finishSetup(){
+  var bad=S.p.goals.some(function(g){var any=(g.n||'').trim()||num(g.a)>0; return any&&(!(g.n||'').trim()||num(g.a)<=0||num(g.y)<=0||num(g.y)>60);});
+  if(bad){alert('For each goal, enter a name, a target amount above 0, and years between 1 and 60. Or clear the goal.');return;}
+  qStep=0; startApp();
+}
+document.addEventListener('input',function(e){
+  var t=e.target; if(!t||t.tagName!=='INPUT') return;
+  var m=t.getAttribute('inputmode'), k=t.getAttribute('data-k'), v=t.value, o=v;
+  if(m==='decimal'){v=v.replace(/[^0-9.]/g,''); var p=v.split('.'); v=p.length>1?p[0]+'.'+p.slice(1).join('').slice(0,2):p[0]; v=v.slice(0,12);}
+  else if(m==='numeric') v=v.replace(/\D/g,'').slice(0,3);
+  else if(k==='name') v=v.replace(/[^\p{L}\s.'’-]/gu,'').slice(0,40);
+  else if(k==='label') v=v.replace(/[<>&"`\\]/g,'').slice(0,40);
+  var mx=parseFloat(t.getAttribute('data-max')); if(isFinite(mx)&&parseFloat(v)>mx) v=String(mx);
+  if(v!==o) t.value=v;
+},true);
 /* --- Boot (runs after everything above is defined) --- */
 (function(){
   var l = $('launchLogo'); if(l) l.src = LOGO;
