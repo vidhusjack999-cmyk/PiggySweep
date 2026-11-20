@@ -225,6 +225,19 @@ body { overflow-x:hidden; }
 .auth-input { display:block; margin-left:auto; margin-right:auto; }
 @media(max-width:480px){ .view { padding-left:16px; padding-right:16px; } .card { padding:18px; } .two { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } }
 
+
+/* Profile menu and account tools */
+.brand{width:100%}
+.brand-profile{margin-left:auto;flex:0 0 44px;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:rgba(255,255,255,.88);color:#7541D8;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 3px 10px rgba(70,45,130,.12)}
+.profile-sheet{background:var(--bg);width:100%;max-width:520px;margin:0 auto;border-radius:24px 24px 0 0;padding:22px 20px 36px;max-height:92vh;overflow:auto}
+.profile-row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);color:var(--ink);background:transparent;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;font:inherit}
+.profile-row:last-child{border-bottom:0}
+.profile-section{font-weight:800;margin:18px 0 4px;color:var(--ink)}
+.profile-value{margin-left:auto;font-weight:700;max-width:58%;overflow-wrap:anywhere;text-align:right}
+.profile-edit-grid{display:grid;gap:10px}
+.profile-edit-grid label{display:block;margin:8px 0 4px}
+@media(min-width:700px){.modal-overlay.profile-overlay{justify-content:center;align-items:center}.profile-sheet{border-radius:24px;max-height:85vh}}
+
 </style>
 </head>
 <body>
@@ -370,6 +383,18 @@ body { overflow-x:hidden; }
         <button id="chatFab" class="fab fab-chat" aria-label="AI Assistant" title="AI Assistant" onclick="showModal('chatModal')">💬</button>
         <button class="fab" aria-label="Add daily expense" title="Add Daily Expense" data-tooltip="Add Daily Expense" onclick="showModal('addModal')">+</button>
     </div>
+</div>
+
+<!-- My Profile Modal -->
+<div id="profileModal" class="modal-overlay profile-overlay" onclick="if(event.target===this)hideModal('profileModal')">
+  <div class="profile-sheet">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <h2 style="margin:0">My Profile 👤</h2>
+      <button class="x" aria-label="Close profile" onclick="hideModal('profileModal')">✕</button>
+    </div>
+    <p class="mut">Manage your personal information and account.</p>
+    <div id="profileSummary"></div>
+  </div>
 </div>
 
 <!-- Global Add Expense Modal -->
@@ -667,7 +692,7 @@ function go(t){
     else if(tab==='inv') out = iv();
     else out = td();
     
-    $('app').innerHTML = '<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span></div>' + out;
+    $('app').innerHTML = '<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span>'+(isProfileComplete()?'<button class="brand-profile" type="button" aria-label="My Profile" title="My Profile" onclick="openMyProfile()">👤</button>':'')+'</div>' + out;
     var fb=$('fabs'); if(fb) fb.style.display=(window.__appOn && !(tab==='profile' && !isProfileComplete()))?'flex':'none';
     $('modalContent').innerHTML = addFormHtml();
     window.scrollTo(0,0);
@@ -760,7 +785,7 @@ function pl(){
     if(c.gs.length){
         h += '<div class="card"><h2>Growth Simulator 📊</h2><p class="mut">Adjust assumed return rate to see how compounding affects your required monthly savings.</p><div class="row" style="border:0; padding-bottom:0"><span>Rate: <b id="g_val_lbl">'+num(S.p.g)+'%</b></span><b style="color:var(--teal); font-size:18px" id="g_req_lbl">'+inr(c.gt)+'/mo</b></div><input type="range" min="0" max="15" step="1" value="'+num(S.p.g)+'" onchange="ugr(this.value)"></div>';
     }
-    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><p class="mut" style="margin-top:-6px">Build 2.2 (13 consolidated updates)</p><p class="mut" style="font-size:11px">Financial data is stored in this browser profile on this device. Incognito and other browsers/devices have separate storage. Use Backup to move data between them.</p><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn alt" style="margin-top:10px" onclick="openHelpCentre()">❔ Help Centre &amp; FAQs</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button><button class="btn alt" style="background:#FCE8E8;color:#9B1C1C;border:1px solid #F3B8B8;margin-top:12px" onclick="deleteMyAccount()">🗑️ Delete My Account</button><p class="mut" style="font-size:11px;margin-top:8px">Reset clears this account\'s local financial data. Delete My Account also deletes your Firebase sign-in account.</p></div>';
+    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><p class="mut" style="margin-top:-6px">Build 2.3</p><p class="mut" style="font-size:11px">Financial data is stored in this browser profile on this device. Incognito and other browsers/devices have separate storage. Use Backup to move data between them.</p><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0;text-align:center;line-height:38px;cursor:pointer">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--warn-bg);color:var(--warn-txt);border:1px solid var(--warn-border);margin-top:12px" onclick="rs()">🗑️ Reset All Data</button><p class="mut" style="font-size:11px;margin-top:8px">Reset clears this account’s local financial data but keeps your sign-in account. Manage personal details and account security from the profile icon.</p></div>';
     return h;
 }
 function ugr(v){ S.p.g=Math.min(100,Math.max(0,num(v))); save(); go('plan'); }
@@ -1121,6 +1146,91 @@ function addInv(){
 }
 function ucv(id,v){ S.inv.forEach(function(i){if(i.id===id) i.cv=v}); save(); go('inv'); }
 function delInv(id){ S.inv=S.inv.filter(function(i){return i.id!==id}); save(); go('inv'); }
+
+/* --- My Profile, security and sharing --- */
+function openMyProfile(){
+  if(!activeUid || !firebase.auth().currentUser){return;}
+  renderMyProfile();
+  showModal('profileModal');
+}
+function renderMyProfile(){
+  var u=firebase.auth().currentUser, email=(u&&u.email)||'';
+  var host=$('profileSummary'); if(!host)return;
+  host.innerHTML='<div class="profile-section">Personal Details</div>'+
+    '<div class="profile-row"><span>Name</span><b class="profile-value">'+esc(S.p.name||u.displayName||'Not set')+'</b></div>'+
+    '<div class="profile-row"><span>Age</span><b class="profile-value">'+esc(S.p.age||'Not set')+'</b></div>'+
+    '<div class="profile-row"><span>Email</span><b class="profile-value">'+esc(email)+'</b></div>'+
+    '<button class="btn alt" style="width:100%;margin-top:12px" onclick="showProfileEditor()">✏️ Edit Profile</button>'+
+    '<div class="profile-section">Security</div>'+
+    '<button class="profile-row" onclick="showChangePassword()">🔒 <span>Change Password</span><span class="profile-value">›</span></button>'+
+    '<div class="profile-section">Data Management</div>'+
+    '<button class="profile-row" onclick="exportData()">💾 <span>Backup My Data</span></button>'+
+    '<label class="profile-row" style="cursor:pointer">📂 <span>Restore My Data</span><input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>'+
+    '<div class="profile-section">Share PiggySweep</div>'+
+    '<button class="profile-row" onclick="sharePiggySweep(true)">🎁 <span>Refer a Friend</span><span class="profile-value">›</span></button>'+
+    '<button class="profile-row" onclick="sharePiggySweep(false)">↗️ <span>Share App</span><span class="profile-value">›</span></button>'+
+    '<div class="profile-section">Support</div>'+
+    '<button class="profile-row" onclick="hideModal(\'profileModal\');openHelpCentre()">❔ <span>Help Centre &amp; FAQs</span><span class="profile-value">›</span></button>'+
+    '<div class="profile-section">Account Management</div>'+
+    '<button class="profile-row" onclick="hideModal(\'profileModal\');doLogout()">↪️ <span>Log Out</span></button>'+
+    '<button class="profile-row" style="color:#A16207" onclick="hideModal(\'profileModal\');rs()">🗑️ <span>Reset All Data</span></button>'+
+    '<button class="profile-row" style="color:#B91C1C" onclick="deleteMyAccount()">🗑️ <span>Delete My Account</span></button>';
+}
+function showProfileEditor(){
+  var host=$('profileSummary'); if(!host)return;
+  host.innerHTML='<h3>Edit Profile</h3><div class="profile-edit-grid"><label>Name</label><input id="editProfileName" maxlength="60" value="'+esc(S.p.name||'')+'"><label>Age</label><input id="editProfileAge" inputmode="numeric" maxlength="3" value="'+esc(S.p.age||'')+'"><label>Gender (optional)</label><select id="editProfileGender"><option value="">Not specified</option>'+['Male','Female','Other','Prefer not to say'].map(function(g){return '<option '+(S.p.gender===g?'selected':'')+'>'+g+'</option>'}).join('')+'</select><button class="btn" onclick="saveProfileEdits()">Save Profile</button><button class="btn alt" onclick="renderMyProfile()">Cancel</button></div>';
+}
+async function saveProfileEdits(){
+  var n=($('editProfileName').value||'').trim(), a=($('editProfileAge').value||'').trim(), g=$('editProfileGender').value;
+  if(!/^\p{L}[\p{L}\s.'’-]*$/u.test(n)){alert('Enter a valid name.');return;}
+  if(!/^\d{1,3}$/.test(a)||Number(a)<13||Number(a)>120){alert('Enter an age between 13 and 120.');return;}
+  S.p.name=n;S.p.age=a;S.p.gender=g;save();
+  try{var u=firebase.auth().currentUser;if(u&&u.displayName!==n)await u.updateProfile({displayName:n});}catch(e){alert('Your local profile was saved, but the Firebase display name could not be updated.');}
+  renderMyProfile();
+}
+function showChangePassword(){
+  var host=$('profileSummary');if(!host)return;
+  host.innerHTML='<h3>Change Password</h3><div class="profile-edit-grid"><label>Current password</label><input id="pwCurrent" type="password" autocomplete="current-password"><label>New password</label><input id="pwNew" type="password" autocomplete="new-password"><label>Confirm new password</label><input id="pwConfirm" type="password" autocomplete="new-password"><p class="mut">Use at least 8 characters, including a letter, number and special character.</p><button class="btn" onclick="changeMyPassword()">Update Password</button><button class="btn alt" onclick="renderMyProfile()">Cancel</button></div>';
+}
+async function changeMyPassword(){
+  var u=firebase.auth().currentUser, cur=$('pwCurrent').value, nw=$('pwNew').value, cf=$('pwConfirm').value;
+  if(!u||!u.email){alert('Please sign in again.');return;}
+  var issue=passwordIssue(nw);if(issue){alert(issue);return;}
+  if(nw!==cf){alert('New passwords do not match.');return;}
+  try{
+    var credential=firebase.auth.EmailAuthProvider.credential(u.email,cur);
+    await u.reauthenticateWithCredential(credential);
+    await u.updatePassword(nw);
+    alert('Your password has been updated.');
+    renderMyProfile();
+  }catch(e){alert('Could not update password: '+firebaseAuthError(e));}
+}
+async function sharePiggySweep(referral){
+  var url='https://vidhusjack999-cmyk.github.io/PiggySweep/';
+  var title=referral?'Try PiggySweep':'PiggySweep';
+  var message=referral?'I thought you might find PiggySweep useful for planning budgets, tracking expenses and monitoring savings.':'Explore PiggySweep, a personal finance planning app.';
+  try{
+    if(navigator.share){await navigator.share({title:title,text:message,url:url});}
+    else if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(message+' '+url);alert('PiggySweep link copied. You can share it with your friend.');}
+    else{prompt('Copy this PiggySweep link:',url);}
+  }catch(e){if(e&&e.name!=='AbortError')alert('Could not open sharing options.');}
+}
+async function deleteMyAccount(){
+  var u=firebase.auth().currentUser;if(!u){alert('Please sign in again.');return;}
+  if(!confirm('Delete your PiggySweep sign-in account? This cannot be undone. Export a backup first if you need your local financial data.'))return;
+  var pw=prompt('For security, enter your current account password to confirm deletion:');
+  if(pw===null)return;
+  try{
+    var credential=firebase.auth.EmailAuthProvider.credential(u.email,pw);
+    await u.reauthenticateWithCredential(credential);
+    var uid=u.uid, key='ps_v2_user_'+uid;
+    await u.delete();
+    try{localStorage.removeItem(key);localStorage.removeItem('ps_v2');}catch(e){}
+    alert('Your account has been deleted.');
+    hideModal('profileModal');
+    await firebase.auth().signOut();
+  }catch(e){alert('Account deletion failed: '+firebaseAuthError(e));}
+}
 
 /* Utilities */
 function exportData() {
