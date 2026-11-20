@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 :root {
     --ov: .4; 
@@ -77,7 +77,8 @@ body {
 .logo-box { width: 150px; height: 150px; border-radius: 36px; overflow: hidden; margin: 0 auto 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); background: #fff; }
 .logo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-\1background: rgba(37,28,65,.72);
+.launch-card { width:100%; max-width:380px; margin:0 auto; padding:32px 24px; border-radius:24px;
+    background: rgba(37,28,65,.72);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border: 1px solid rgba(255,255,255,.18);
@@ -253,14 +254,30 @@ body { overflow-x:hidden; }
     <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 32px 24px;">
         <h1 style="margin-bottom:24px">Welcome Back 👋</h1>
         <input class="auth-input" id="email" type="email" placeholder="Email address" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Email address">
-        <input class="auth-input" id="password" type="password" placeholder="Password" autocomplete="new-password" aria-label="Password">
+        <input class="auth-input" id="password" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password">
         <label class="remember-email" style="display:flex;align-items:center;justify-content:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px"><input id="rememberEmail" type="checkbox" style="width:auto;margin:0"> Remember email only</label>
         <button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
-        <button class="btn alt" id="signupBtn" style="margin-top:12px" onclick="doSignup()">Create Account</button>
+        <button class="btn alt" id="signupBtn" style="margin-top:12px" onclick="showSignupView()">Create Account</button>
         <button class="btn ghost" style="margin-top:8px" onclick="showResetView()">Forgot password?</button>
         <p id="authMessage" class="auth-note" role="status" aria-live="polite">Sign in to PiggySweep. Your financial information stays on this device and is not uploaded to Firebase.</p>
     </div>
     <p class="ownership-footer"><strong>PiggySweep™</strong><br>Designed &amp; Developed by Vidyalakshmi Raghuraman<br>© 2026 Vidyalakshmi Raghuraman. All rights reserved.</p>
+</div>
+
+<!-- Create Account -->
+<div id="signupView" class="view">
+  <div class="card" style="width:100%;max-width:380px;text-align:center;padding:32px 24px">
+    <h1 style="margin-bottom:16px">Create Account ✨</h1>
+    <input class="auth-input" id="suName" type="text" placeholder="Your name" autocomplete="name" aria-label="Your name">
+    <input class="auth-input" id="suEmail" type="email" placeholder="Email address" autocomplete="email" autocapitalize="none" spellcheck="false" aria-label="Email address">
+    <input class="auth-input" id="suPassword" type="password" placeholder="Password" autocomplete="new-password" aria-label="Password">
+    <input class="auth-input" id="suConfirm" type="password" placeholder="Re-enter password" autocomplete="new-password" aria-label="Confirm password">
+    <p class="auth-note" style="margin-top:0">At least 8 characters, with a letter, a number and a special character (like @).</p>
+    <button class="btn" id="suBtn" onclick="doSignup()">Create Account</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="backToLogin()">← Back to Login</button>
+    <p id="signupMessage" class="auth-note" role="status" aria-live="polite"></p>
+  </div>
+  <p class="ownership-footer"><strong>PiggySweep™</strong><br>Designed &amp; Developed by Vidyalakshmi Raghuraman<br>© 2026 Vidyalakshmi Raghuraman. All rights reserved.</p>
 </div>
 
 <!-- Password recovery is a separate view; it never asks for the current password. -->
@@ -400,6 +417,7 @@ function save(){try{if(!activeUid) return; localStorage.setItem(K,JSON.stringify
 function loadUserData(user){
     var uid=user && user.uid;
     if(!uid) return;
+    if(activeUid===uid) return;
     activeUid=uid;
     K='ps_v2_user_'+uid;
     var userData=localStorage.getItem(K);
@@ -497,21 +515,46 @@ function clearLoginAfterSignOut(){
     clearAuthFields(true);
     try { var saved=localStorage.getItem('ps_remember_email'); if(saved){$('email').value=saved;$('rememberEmail').checked=true;} else if($('rememberEmail')) $('rememberEmail').checked=false; } catch(e){}
 }
+function routeAfterAuth(user){
+  if(window.__routed===user.uid) return;
+  window.__routed=user.uid;
+  loadUserData(user);
+  if(!S.p.name && user.displayName){S.p.name=user.displayName; save();}
+  if(!num(S.p.pay)) goView('benefitsView'); else startApp();
+}
 async function doLogin() {
     var c = authCredentials(false); if (!c) return;
     rememberEmailChoice(c.email);
-    try { await firebase.auth().signInWithEmailAndPassword(c.email, c.password); }
+    var btn=$('loginBtn'); btn.disabled=true;
+    try { var cred=await firebase.auth().signInWithEmailAndPassword(c.email, c.password); routeAfterAuth(cred.user); }
     catch (e) { showAuthMessage(firebaseAuthError(e), true); }
-    finally { var pw=$('password'); if(pw) pw.value=''; }
+    finally { btn.disabled=false; var pw=$('password'); if(pw) pw.value=''; }
 }
-async function doSignup() {
-    var c = authCredentials(true); if (!c) return;
-    rememberEmailChoice(c.email);
-    try {
-        await firebase.auth().createUserWithEmailAndPassword(c.email, c.password);
-        showAuthMessage('Account created successfully. Opening PiggySweep…', false);
-    } catch (e) { showAuthMessage(firebaseAuthError(e), true); }
-    finally { var pw=$('password'); if(pw) pw.value=''; }
+function showSignupView(){
+  ['suName','suEmail','suPassword','suConfirm'].forEach(function(id){$(id).value='';});
+  $('signupMessage').textContent='';
+  goView('signupView');
+}
+function signupMsg(m,err){var el=$('signupMessage');el.textContent=m;el.style.color=err?'var(--warn-txt)':'var(--mut)';}
+async function doSignup(){
+  var name=$('suName').value.trim(), email=$('suEmail').value.trim(), pw=$('suPassword').value, cf=$('suConfirm').value;
+  if(!name){signupMsg('Please enter your name.',true);$('suName').focus();return;}
+  if(!email||!validEmail(email)){signupMsg('Please enter a valid email address.',true);$('suEmail').focus();return;}
+  var issue=passwordIssue(pw); if(issue){signupMsg(issue,true);$('suPassword').focus();return;}
+  if(pw!==cf){signupMsg('Passwords do not match. Please re-enter them.',true);$('suConfirm').focus();return;}
+  var btn=$('suBtn'); btn.disabled=true; btn.textContent='Creating…';
+  window.__signingUp=true; window.__newEmail=email;
+  try{
+    var cred=await firebase.auth().createUserWithEmailAndPassword(email,pw);
+    try{ await cred.user.updateProfile({displayName:name}); }catch(e2){}
+    await firebase.auth().signOut();
+  }catch(e){
+    window.__signingUp=false;
+    signupMsg(firebaseAuthError(e),true);
+  }finally{
+    btn.disabled=false; btn.textContent='Create Account';
+    $('suPassword').value=''; $('suConfirm').value='';
+  }
 }
 function showResetView() {
     var current=($('email').value||'').trim();
@@ -574,6 +617,7 @@ function scrollNext() {
 }
 
 function startOnboarding() {
+    window.__appOn = true;
     qStep = 1;
     goView('appView');
     tab = 'profile';
@@ -1097,9 +1141,18 @@ function delInv(id){ S.inv=S.inv.filter(function(i){return i.id!==id}); save(); 
 function exportData() {
     if(!activeUid){alert('Please sign in before creating a backup.');return;}
     var backup={format:'PiggySweep backup',version:2,exportedAt:new Date().toISOString(),data:S};
-    var blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    var json=JSON.stringify(backup,null,2), name='piggysweep_backup_'+new Date().toISOString().slice(0,10)+'.json';
+    var C=window.Capacitor, P=C&&C.Plugins;
+    if(C&&C.isNativePlatform&&C.isNativePlatform()){
+      if(!(P&&P.Filesystem&&P.Share)){alert('Backup needs the Filesystem and Share plugins. Run: npm i @capacitor/filesystem @capacitor/share && npx cap sync');return;}
+      P.Filesystem.writeFile({path:name,data:json,directory:'CACHE',encoding:'utf8'})
+        .then(function(w){return P.Share.share({title:'PiggySweep backup',url:w.uri,dialogTitle:'Save or share your backup'});})
+        .catch(function(e){var m=String(e&&e.message||e); if(!/cancel/i.test(m)) alert('Could not create backup: '+m);});
+      return;
+    }
+    var blob=new Blob([json],{type:'application/json'});
     var url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download='piggysweep_backup_'+new Date().toISOString().slice(0,10)+'.json';
+    a.href=url; a.download=name;
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},1000);
 }
 
@@ -1141,8 +1194,8 @@ function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); locatio
   goView('launchView'); // Firebase Authentication decides whether to show login or the app.
 })();
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-auth-compat.js"></script>
 <script>
 // PiggySweep Firebase Authentication only. Financial records remain in device localStorage.
 const firebaseConfig = {
@@ -1157,17 +1210,22 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    loadUserData(user);
-    if (!S.p.pay || num(S.p.pay) === 0) goView('benefitsView');
-    else startApp();
+    if (window.__signingUp) return;
+    routeAfterAuth(user);
   } else {
+    window.__routed='';
     activeUid=''; K=LEGACY_K; S=dflt(); window.__appOn=false; tab=''; qStep=1;
     var fabs=$('fabs');if(fabs)fabs.style.display='none';
     if($('app'))$('app').innerHTML='';if($('nav'))$('nav').innerHTML='';
     clearLoginAfterSignOut();
-    // Only show Login after an explicit sign-out; otherwise keep the branded launch screen.
-    if(window.__piggySweepLoggingOut){window.__piggySweepLoggingOut=false;goView('loginView');showAuthMessage('You have been signed out successfully.',false);}
-    else goView('launchView');
+    if(window.__signingUp){
+      window.__signingUp=false; goView('loginView');
+      $('email').value=window.__newEmail||'';
+      showAuthMessage('Account created. Please log in with your email and password.',false);
+    } else if(window.__piggySweepLoggingOut){
+      window.__piggySweepLoggingOut=false; goView('loginView');
+      showAuthMessage('You have been signed out successfully.',false);
+    } else goView('launchView');
   }
 });
 window.addEventListener('DOMContentLoaded',function(){
@@ -1175,7 +1233,7 @@ window.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 <script>
-if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+if('serviceWorker' in navigator && !(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) && (location.protocol === 'https:' || location.hostname === 'localhost')){
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
