@@ -751,7 +751,7 @@ function pl(){
     if(c.gs.length){
         h += '<div class="card"><h2>Growth Simulator 📊</h2><p class="mut">Adjust assumed return rate to see how compounding affects your required monthly savings.</p><div class="row" style="border:0; padding-bottom:0"><span>Rate: <b id="g_val_lbl">'+num(S.p.g)+'%</b></span><b style="color:var(--teal); font-size:18px" id="g_req_lbl">'+inr(c.gt)+'/mo</b></div><input type="range" min="0" max="15" step="1" value="'+num(S.p.g)+'" onchange="ugr(this.value)"></div>';
     }
-    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
+    h+='<div class="card" id="settingsCard"><h2>Settings ⚙️</h2><p class="mut" style="margin-top:-6px">Build 2.1 (validation + 3 dashboards)</p><div class="two"><button class="btn alt" style="margin-top:0" onclick="exportData()">💾 Backup</button><label class="btn alt" style="margin-top:0; text-align:center; line-height:38px; cursor:pointer;">📂 Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div><button class="btn alt" style="background:var(--card); border:1px solid var(--line); color:var(--ink); margin-top:16px" onclick="qStep=1; go(\'profile\')">✏️ Edit Profile Questionnaire</button><button class="btn ghost" style="margin-top:12px" onclick="doLogout()">↪️ Log Out</button><button class="btn alt" style="background:var(--warn-bg); color:var(--warn-txt); border:1px solid var(--warn-border); margin-top:12px" onclick="rs()">🗑️ Reset All Data</button></div>';
     return h;
 }
 function ugr(v){ S.p.g=Math.min(100,Math.max(0,num(v))); save(); go('plan'); }
@@ -1159,7 +1159,7 @@ function importData(e) {
 function rs(){if(confirm('Reset all data?')){localStorage.removeItem(K); location.reload();}}
 
 function finishSetup(){
-  var bad=S.p.goals.some(function(g){var any=(g.n||'').trim()||num(g.a)>0; return any&&(!(g.n||'').trim()||num(g.a)<=0||num(g.y)<=0||num(g.y)>60);});
+  var bad=S.p.goals.some(function(g){var any=(g.n||'').trim()||num(g.a)>0; return any&&(!(g.n||'').trim()||num(g.a)<=0||num(g.y)<1||num(g.y)>60);});
   if(bad){alert('For each goal, enter a name, a target amount above 0, and years between 1 and 60. Or clear the goal.');return;}
   qStep=0; startApp();
 }
