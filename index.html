@@ -144,7 +144,6 @@ nav button.on::before { content: ""; display: block; width: 24px; height: 4px; b
 .fab-container { position: fixed; bottom: 80px; right: 20px; display: flex; flex-direction: column; gap: 16px; z-index: 90; }
 .fab { width: 56px; height: 56px; border-radius: 28px; background: var(--grad); color: white; font-size: 28px; border: none; box-shadow: 0 8px 16px rgba(124, 58, 237, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 #chatFab { font-size: 24px; }
-.fab-settings { font-size: 23px; background: var(--card); color: var(--teal); border: 1px solid var(--line); box-shadow: 0 6px 14px rgba(30, 27, 58, 0.16); }
 
 /* Modals */
 .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -175,10 +174,10 @@ nav button.on::before { content: ""; display: block; width: 24px; height: 4px; b
 .chip.on { background: var(--tealbg); border-color: var(--teal); color: var(--teal); }
 .chip.on.w { background: var(--ambbg); border-color: var(--amb); color: var(--amb); }
 
-.cats { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; scrollbar-width: none; }
+.cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; padding: 4px 0 10px; overflow: visible; }
 .cats::-webkit-scrollbar { display: none; }
-.cat { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; font-size: 12px; font-weight: 700; min-width: 68px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
-.cat span { font-size: 24px; }
+.cat { min-width: 0; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: inherit; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; white-space: normal; overflow-wrap: anywhere; padding: 8px 3px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+.cat span { font-size: 22px; }
 .cat.on { background: var(--tealbg); border-color: var(--teal); color: var(--teal); }
 
 /* Overspending Notification Style Alerts */
@@ -433,7 +432,7 @@ body { overflow-x:hidden; }
 var LOGO = "data:image/jpeg;base64,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";
 var K='ps_v2', LEGACY_K='ps_v2', MIGRATION_K='ps_v2_user_migration_v1', activeUid='', tab='', tag='want', qStep=1, cat='food', pd='month', ity='mf', irec=false, dv='ov', cmo=0, csel='';
 
-function dflt(){return{bud:{}, p:{name:'', age:'', gender:'', sp:{}, pay:'', paySpouse:'', paySide:'', fix:'', vr:'', g:8, sv:{}, goals:[{n:'🏠 House',a:'',y:5}]}, tx:[], inv:[]}}
+function dflt(){return{bud:{}, p:{name:'', age:'', gender:'', sp:{}, pay:'', paySpouse:'', paySide:'', fix:'', vr:'', g:8, sv:{}, goals:[{n:'🏠 House',a:'',y:5}]}, tx:[], inv:[], play:{points:0,quizDays:[],questDays:[],gameDays:[],matches:0,badges:[],lastMascot:'happy'}, alertSeen:{}}}
 function normalizeData(s){
     if(!s || !s.p || typeof s.p !== 'object') return dflt();
     s.inv=Array.isArray(s.inv)?s.inv:[];
@@ -442,6 +441,10 @@ function normalizeData(s){
     s.p.sv=s.p.sv&&typeof s.p.sv==='object'?s.p.sv:{};
     s.p.sp=s.p.sp&&typeof s.p.sp==='object'?s.p.sp:{};
     s.p.goals=Array.isArray(s.p.goals)&&s.p.goals.length?s.p.goals:[{n:'',a:'',y:5}];
+    if(!s.play||typeof s.play!=='object') s.play={points:0,quizDays:[],questDays:[],gameDays:[],matches:0,badges:[],lastMascot:'happy'};
+    ['quizDays','questDays','gameDays','badges'].forEach(function(k){if(!Array.isArray(s.play[k]))s.play[k]=[];});
+    s.play.points=Number(s.play.points)||0; s.play.matches=Number(s.play.matches)||0;
+    if(!s.alertSeen||typeof s.alertSeen!=='object') s.alertSeen={};
     return s;
 }
 function readData(key){try{return normalizeData(JSON.parse(localStorage.getItem(key)||'null'))}catch(e){return dflt()}}
@@ -492,7 +495,7 @@ var esc = function(s){return String(s||'').replace(/[&<>"]/g,function(c){return{
 function need(a,y,g){var n=Math.max(1,y*12), r=g/1200; return r ? a*r/(Math.pow(1+r,n)-1) : a/n}
 function calc(){
     var p=S.p; var g = num(p.g);
-    var gs=p.goals.filter(function(x){return num(x.a)>0}).map(function(x){return{n:x.n, a:num(x.a), y:num(x.y)||1, m:need(num(x.a),num(x.y)||1,g)}});
+    var gs=p.goals.filter(function(x){return num(x.a)>0}).map(function(x){return{n:x.n, a:num(x.a), y:num(x.y)||1, m:need(Math.max(0,num(x.a)-num(x.s)),num(x.y)||1,g)}});
     var gt=gs.reduce(function(s,x){return s+x.m},0);
     var totalInc = num(p.pay) + num(p.paySpouse) + num(p.paySide);
     
@@ -765,14 +768,6 @@ function ge(){
   return h+(S.p.goals.length<4?'<button class="btn alt" onclick="ag()">+ Add goal</button>':'');
 }
 
-function openSettings(){
-    if(!window.__appOn) return;
-    go('plan');
-    setTimeout(function(){
-        var card = document.getElementById('settingsCard');
-        if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
-    }, 100);
-}
 
 /* --- Plan --- */
 function pl(){
@@ -935,7 +930,7 @@ function dcal(){
   var n=new Date(),f=new Date(n.getFullYear(),n.getMonth()+cmo,1),y=f.getFullYear(),m=f.getMonth(),dim=new Date(y,m+1,0).getDate(),base=calc().flex/dim,off=(f.getDay()+6)%7,mk=y+'-'+('0'+(m+1)).slice(-2),tot={},flx={},i,d;
   S.tx.forEach(function(t){if(t.d.slice(0,7)===mk){tot[t.d]=(tot[t.d]||0)+t.a; if(t.g!=='need') flx[t.d]=(flx[t.d]||0)+t.a}});
   var mt=Object.keys(tot).reduce(function(s,k){return s+tot[k]},0),
-  h='<h1>Calendar 📅</h1><div class="card"><div class="row" style="border:0; align-items:center"><button class="x" onclick="cmv(-1)" aria-label="Previous month">◀</button><b>'+f.toLocaleDateString('en-IN',{month:'long',year:'numeric'})+'</b><button class="x" onclick="cmv(1)" aria-label="Next month"'+(cmo>=0?' disabled':'')+'>▶</button></div><div class="cal">'+['M','T','W','T','F','S','S'].map(function(x){return '<div class="mut">'+x+'</div>'}).join('');
+  h='<h1>Daily Expenses 📅</h1><div class="card"><div class="row" style="border:0; align-items:center"><button class="x" onclick="cmv(-1)" aria-label="Previous month">◀</button><b>'+f.toLocaleDateString('en-IN',{month:'long',year:'numeric'})+'</b><button class="x" onclick="cmv(1)" aria-label="Next month"'+(cmo>=0?' disabled':'')+'>▶</button></div><div class="cal">'+['M','T','W','T','F','S','S'].map(function(x){return '<div class="mut">'+x+'</div>'}).join('');
   for(i=0;i<off;i++) h+='<div></div>';
   for(d=1;d<=dim;d++){var k=mk+'-'+('0'+d).slice(-2),v=tot[k]||0,cl=v&&base>0?((flx[k]||0)>base?' ov':' ok'):''; h+='<button class="cd'+cl+(csel===k?' sel':'')+'" onclick="csl(\''+k+'\')"><span>'+d+'</span><small>'+(v?(v>=1000?(v/1000).toFixed(v>=10000?0:1)+'k':Math.round(v)):'')+'</small></button>'}
   h+='</div><p class="mut" style="margin:10px 0 0">Month total <b>'+inr(mt)+'</b>.'+(base>0?' Purple days kept flexible spending within your daily allowance of '+inr(base)+'. Amber days went over it.':'')+'</p></div>';
@@ -952,7 +947,7 @@ function inc(){return calc().totalInc}
 function spd(p){pd=p; go('dash')}
 function sdv(v){dv=v; go('dash')}
 function db(){
-  return '<div class="chips" style="margin:0 0 12px">'+[['ov','Overview'],['act','Spend'],['cal','Calendar']].map(function(x){return '<button class="chip'+(dv===x[0]?' on':'')+'" onclick="sdv(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>'+(dv==='act'?dba():dv==='cal'?dcal():dov());
+  return '<div class="chips" style="margin:0 0 12px">'+[['ov','Overview'],['act','Spend'],['cal','Daily Expenses']].map(function(x){return '<button class="chip'+(dv===x[0]?' on':'')+'" onclick="sdv(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>'+(dv==='act'?dba():dv==='cal'?dcal():dov());
 }
 
 /* --- Budgets --- */
@@ -1102,8 +1097,9 @@ function inst(d){
     if(isNaN(a)||a>n) return 0; 
     return Math.max(0,(n.getFullYear()-a.getFullYear())*12+n.getMonth()-a.getMonth()+(n.getDate()>=a.getDate()?1:0));
 }
-function ivd(i){return i.m?num(i.a)*inst(i.d):num(i.a)}
-function icv(i){return num(i.cv)>0?num(i.cv):ivd(i)}
+function ivd(i){var k=parseInt(i.k,10);return i.m?num(i.a)*((i.k!==''&&i.k!=null&&isFinite(k)&&k>=0)?Math.min(k,inst(i.d)):inst(i.d)):num(i.a)}
+function uik(id,v){S.inv.forEach(function(i){if(i.id===id)i.k=String(v).replace(/\D/g,'').slice(0,3)});save();go('inv');}
+function icv(i){var c=parseFloat(i.cv);return (i.cv!==''&&i.cv!=null&&isFinite(c)&&c>=0)?c:ivd(i)}
 
 function iv(){
   var A=S.inv || [], inv=0, cur=0, T=day(new Date());
@@ -1126,7 +1122,7 @@ function iv(){
     h+='<div class="card"><h2>Your Holdings</h2>';
     A.slice().reverse().forEach(function(i){
         var t=IT[i.ty]||IT.oth;
-        h+='<div class="goal"><div class="row" style="border:0; padding:0; align-items:center"><span><span class="ic">'+t[1]+'</span><b>'+esc(i.n)+'</b><br><span class="mut" style="margin-left:44px">'+t[2]+(i.b?' · '+esc(i.b):'')+' · '+(i.m?inr(num(i.a))+'/mo':'on '+esc(i.d))+'</span></span><b>'+inr(ivd(i))+'</b></div><div class="two" style="margin-top:6px"><div><label>Current Value (₹)</label><input inputmode="decimal" value="'+esc(i.cv)+'" placeholder="'+Math.round(ivd(i))+'" onchange="ucv('+i.id+',this.value)"></div><div style="display:flex; align-items:flex-end"><button class="btn alt sm" style="width:100%; padding:14px" onclick="delInv('+i.id+')">Remove</button></div></div></div>';
+        h+='<div class="goal"><div class="row" style="border:0; padding:0; align-items:center"><span><span class="ic">'+t[1]+'</span><b>'+esc(i.n)+'</b><br><span class="mut" style="margin-left:44px">'+t[2]+(i.b?' · '+esc(i.b):'')+' · '+(i.m?inr(num(i.a))+'/mo':'on '+esc(i.d))+'</span></span><b>'+inr(ivd(i))+'</b></div><div class="two" style="margin-top:6px"><div><label>Current Value (₹)</label><input inputmode="decimal" value="'+esc(i.cv)+'" placeholder="'+Math.round(ivd(i))+'" onchange="ucv('+i.id+',this.value)"></div><div style="display:flex; align-items:flex-end"><button class="btn alt sm" style="width:100%; padding:14px" onclick="delInv('+i.id+')">Remove</button></div></div>'+(i.m?'<label>Instalments paid (blank = every month since start)</label><input inputmode="numeric" maxlength="3" value="'+esc(i.k==null?'':i.k)+'" placeholder="'+inst(i.d)+'" onchange="uik('+i.id+',this.value)">':'')+'</div>';
     });
     h+='</div>';
   } else {
@@ -1168,8 +1164,9 @@ function renderMyProfile(){
     '<div class="profile-section">Share PiggySweep</div>'+
     '<button class="profile-row" onclick="sharePiggySweep(true)">🎁 <span>Refer a Friend</span><span class="profile-value">›</span></button>'+
     '<button class="profile-row" onclick="sharePiggySweep(false)">↗️ <span>Share App</span><span class="profile-value">›</span></button>'+
-    '<div class="profile-section">Support</div>'+
+    '<div class="profile-section">Support &amp; Feedback</div>'+
     '<button class="profile-row" onclick="hideModal(\'profileModal\');openHelpCentre()">❔ <span>Help Centre &amp; FAQs</span><span class="profile-value">›</span></button>'+
+    '<button class="profile-row" onclick="hideModal(\'profileModal\');openWriteToUs()">✉️ <span>Write to Us<br><small style="color:var(--mut);font-weight:500">Report a bug, share feedback or suggest a feature</small></span><span class="profile-value">›</span></button>'+
     '<div class="profile-section">Account Management</div>'+
     '<button class="profile-row" onclick="hideModal(\'profileModal\');doLogout()">↪️ <span>Log Out</span></button>'+
     '<button class="profile-row" style="color:#A16207" onclick="hideModal(\'profileModal\');rs()">🗑️ <span>Reset All Data</span></button>'+
@@ -1355,7 +1352,7 @@ if('serviceWorker' in navigator && !(window.Capacitor && Capacitor.isNativePlatf
 
   /* Item 1: local-first persistence clarity. Data is per browser profile/device; Incognito is isolated. */
   var oldExport=window.exportData;
-  window.exportData=function(){ if(!activeUid){alert('Please sign in before creating a backup.');return;} oldExport(); };
+  window.exportData=function(){ if(!activeUid){alert('Please sign in before creating a backup.');return;} if(!confirm('This backup contains your financial information as readable text. Keep the file somewhere private and do not share it. Create the backup?'))return; oldExport(); };
 
   /* Item 2: consistent numeric-only validation for every decimal/numeric input. */
   document.addEventListener('input',function(e){
@@ -1484,7 +1481,7 @@ if('serviceWorker' in navigator && !(window.Capacitor && Capacitor.isNativePlatf
   function mascotState(){var alerts=typeof window.bwl==='function'?window.bwl():[];if(alerts.some(function(x){return /OVER BUDGET|LIMIT REACHED/.test(x)}))return 'worried';if(alerts.length)return 'thinking';return 'happy';}
   function mascotCard(){var m=mascotState(),cfg={happy:['🐷','Piggy is happy!','Your money journey is moving along. Keep building healthy habits.'],thinking:['🐷','Piggy is thinking…','A category is getting close to its budget limit. Review your spending.'],worried:['🐷','Piggy needs a break!','A budget limit has been exceeded. Review the category and plan your next steps.']};var x=cfg[m];return '<div class="card play-mascot '+m+'"><div class="play-mascot-face">'+x[0]+'</div><div><b>'+x[1]+'</b><p class="mut">'+x[2]+'</p></div></div>';}
   function playHome(){return '<section class="play-wrap"><div class="play-hero"><div><span class="eyebrow">PIGGYSWEEP PLAY ZONE</span><h1>Learn, play & grow! 🐷</h1><p>Small money lessons. Fun little challenges. Better everyday habits.</p><div class="play-score">⭐ '+Number(S.play.points||0)+' Piggy Points</div></div><div class="play-hero-pig">🐷</div></div>'+mascotCard()+'<div class="play-grid"><button class="play-tile" onclick="openPiggyGame()"><span>🪙</span><b>Piggy Games</b><small>Coin matching puzzle</small></button><button class="play-tile" onclick="openPiggyQuiz()"><span>🧠</span><b>Money Quiz</b><small>Quick finance questions</small></button><button class="play-tile" onclick="openPiggyQuest()"><span>🎯</span><b>Savings Quest</b><small>Build healthy habits</small></button><button class="play-tile" onclick="openPiggyRewards()"><span>🏆</span><b>Piggy Rewards</b><small>Points, badges & streaks</small></button></div><div class="card"><h3>💡 Why PiggySweep?</h3><p class="mut">More than an expense tracker: bring together money tracking, planning, learning and playful habit-building in one place. Rewards are virtual encouragement—not cash or investment returns.</p></div><div id="playToast" class="play-toast" role="status" aria-live="polite"></div></section>';}
-  function playBack(title){return '<div class="play-subhead"><button class="btn alt sm" onclick="go(\'play\')">← Play Zone</button><h2>'+title+'</h2></div>';}
+  function playBack(title){return '<div class="play-subhead"><button class="btn alt sm" onclick="returnToPiggyHome()">← Play Zone</button><h2>'+title+'</h2></div>';}
   function openPiggyGame(){playScreen='game';newPiggyRound();go('play');}
   function newPiggyRound(){var pairs=['🪙','💰','🏦','🎯'];matchCards=pairs.concat(pairs).map(function(v,i){return {v:v,id:i,uid:Math.random()};}).sort(function(){return Math.random()-.5;});matchOpen=[];matchFound=[];matchLocked=false;}
   function gameView(){return '<section class="play-wrap">'+playBack('🪙 Piggy Match')+'<div class="card"><p>Find all four matching pairs. Match the money symbols to earn 10 Piggy Points. No real money or balances are involved.</p><div class="match-grid">'+matchCards.map(function(c,i){var shown=matchOpen.indexOf(i)>=0||matchFound.indexOf(c.v)>=0;return '<button class="match-card '+(shown?'revealed':'')+'" '+(shown||matchLocked?'disabled':'')+' onclick="flipPiggyCard('+i+')">'+(shown?c.v:'❔')+'</button>';}).join('')+'</div><p class="mut">Pairs found: '+matchFound.length+' / 4</p>'+(matchFound.length===4?'<div class="play-success">🎉 Brilliant matching! You earned 40 Piggy Points.</div><button class="btn" onclick="openPiggyGame()">Play again</button>':'<button class="btn alt" onclick="openPiggyGame()">Restart round</button>')+'</div></section>';}
@@ -1500,32 +1497,111 @@ if('serviceWorker' in navigator && !(window.Capacitor && Capacitor.isNativePlatf
   function rewardsView(){var pts=Number(S.play.points)||0,level=pts>=150?'Wealth Builder':pts>=60?'Goal Grower':'Piggy Starter',badges=S.play.badges||[];return '<section class="play-wrap">'+playBack('🏆 Piggy Rewards')+'<div class="play-reward-hero"><div>⭐</div><h2>'+pts+' Piggy Points</h2><p>Level: '+level+'</p><small>Virtual points celebrate learning and healthy habits. They have no cash value.</small></div><div class="card"><h3>🏅 Your badges</h3>'+(badges.length?'<div class="badge-list">'+badges.map(function(b){return '<span class="game-badge">🏅 '+b+'</span>';}).join('')+'</div>':'<p class="mut">Complete a game, quiz or quest to earn your first badge.</p>')+'</div><div class="card"><h3>How to earn points</h3><p>🪙 Complete Piggy Match: 40 points</p><p>🧠 Complete the daily quiz: 15 points</p><p>🎯 Complete a Savings Quest check-in: 10 points</p></div></section>';}
   function playRender(){if(playScreen==='game')return gameView();if(playScreen==='quiz')return quizView();if(playScreen==='quest')return questView();if(playScreen==='rewards')return rewardsView();return playHome();}
   var baseGo=window.go;
-  function ensurePlayNavigation(active){
-    if(!window.__appOn || !activeUid || !isProfileComplete()) return;
-    var nav=document.getElementById('nav');
-    if(!nav) return;
-    var items=[['plan','🎯','Plan'],['dash','📊','Dashboard'],['today','📅','Daily'],['bud','💳','Budgets'],['inv','💼','Invest'],['play','🎮','Play']];
-    nav.innerHTML=items.map(function(x){return '<button class="'+(x[0]===active?'on':'')+'" onclick="go(\''+x[0]+'\')"><span class="nav-icon">'+x[1]+'</span><span>'+x[2]+'</span></button>';}).join('');
-  }
-  window.go=function(t){
-    if(t!=='play'){
-      baseGo(t);
-      ensurePlayNavigation(t);
+  window.go=function(t){if(t!=='play'){baseGo(t);if(window.__appOn&&activeUid&&isProfileComplete()){var nav=document.getElementById('nav');if(nav){nav.innerHTML+='<button class="'+(t==='play'?'on':'')+'" onclick="go(\'play\')"><span class="nav-icon">🎮</span><span>Play</span></button>';}}return;}if(!activeUid||!window.__appOn){goView('loginView');return;}tab='play';var nav=document.getElementById('nav');if(nav){nav.innerHTML=[['plan','🎯','Plan'],['dash','📊','Dashboard'],['today','📅','Daily'],['bud','💳','Budgets'],['inv','💼','Invest'],['play','🎮','Play']].map(function(x){return '<button class="'+(x[0]==='play'?'on':'')+'" onclick="go(\''+x[0]+'\')"><span class="nav-icon">'+x[1]+'</span><span>'+x[2]+'</span></button>';}).join('');}var app=document.getElementById('app');if(app)app.innerHTML='<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span><button class="brand-profile" type="button" aria-label="My Profile" title="My Profile" onclick="openMyProfile()">👤</button></div>'+playRender();var fabs=document.getElementById('fabs');if(fabs)fabs.style.display='flex';window.scrollTo(0,0);};
+  window.openPiggyGame=openPiggyGame;window.flipPiggyCard=flipPiggyCard;window.openPiggyQuiz=openPiggyQuiz;window.answerPiggyQuiz=answerPiggyQuiz;window.openPiggyQuest=openPiggyQuest;window.completePiggyQuest=completePiggyQuest;window.openPiggyRewards=openPiggyRewards;window.returnToPiggyHome=function(){playScreen='home';go('play');};window.renderPiggyPlay=function(){return playRender();};
+  var style=document.createElement('style');style.textContent='.play-wrap{max-width:480px;margin:0 auto;padding-bottom:24px}.play-hero{background:var(--grad);color:#fff;border-radius:22px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 8px 24px #7541d822}.play-hero h1{font-size:25px;margin:8px 0}.play-hero p{font-size:13px;line-height:1.5;margin:0;color:#fff}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.12em;opacity:.8}.play-score{display:inline-block;margin-top:14px;background:#ffffff27;padding:8px 12px;border-radius:20px;font-weight:800}.play-hero-pig{font-size:68px;filter:drop-shadow(0 5px 5px #421c5540)}.play-mascot{display:flex;align-items:center;gap:14px;margin-top:14px;border:1px solid var(--line)}.play-mascot p{margin:4px 0 0}.play-mascot-face{font-size:42px}.play-mascot.worried{border-color:#f6b66c;background:#fff6e9}.play-mascot.thinking{border-color:#d6c5ff}.play-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.play-tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 12px;text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:7px;min-height:132px;box-shadow:0 4px 14px #4630780c}.play-tile span{font-size:30px}.play-tile small{color:var(--mut);font-size:11px}.play-subhead{display:flex;align-items:center;gap:12px;margin:8px 0 14px}.play-subhead h2{font-size:21px;margin:0}.match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:18px 0}.match-card{aspect-ratio:1;border:1px solid var(--line);border-radius:14px;background:#eee7ff;color:#5d35b6;font-size:28px;font-weight:800}.match-card.revealed{background:#fff;border-color:#a78bfa}.match-card:disabled{opacity:1}.play-success{padding:12px;background:#e9fff3;color:#126c43;border-radius:12px;font-weight:800}.quiz-options{display:grid;gap:9px;margin:18px 0}.quiz-option{padding:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit}.quest-card{text-align:center}.quest-emoji{font-size:52px}.quest-progress{display:flex;flex-direction:column;margin:18px}.quest-progress b{font-size:30px;color:var(--teal)}.play-reward-hero{background:var(--grad);color:white;text-align:center;padding:24px;border-radius:20px}.play-reward-hero div{font-size:42px}.play-reward-hero h2{margin:4px}.play-reward-hero small{opacity:.9}.badge-list{display:flex;flex-wrap:wrap;gap:8px}.game-badge{background:#eee7ff;color:#6036b4;border-radius:20px;padding:8px 11px;font-size:12px;font-weight:800}.play-toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,15px);background:#30204e;color:#fff;padding:11px 16px;border-radius:24px;opacity:0;pointer-events:none;transition:.2s;z-index:120;white-space:nowrap}.play-toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:420px){nav button{font-size:9px;padding:12px 0}.nav-icon{font-size:18px}.play-hero h1{font-size:22px}}';document.head.appendChild(style);
+})();
+
+/* Play Zone interaction reliability patch: explicit delegated handlers for navigation and game tiles. */
+(function(){
+  if(window.__piggyPlayClickPatch) return; window.__piggyPlayClickPatch=true;
+  document.addEventListener('click',function(e){
+    var navBtn=e.target&&e.target.closest?e.target.closest('#nav button'):null;
+    if(navBtn && /Play/i.test((navBtn.textContent||'').trim())){
+      e.preventDefault(); e.stopImmediatePropagation(); window.go('play'); return;
+    }
+    var tile=e.target&&e.target.closest?e.target.closest('.play-tile'):null;
+    if(tile){
+      e.preventDefault(); e.stopImmediatePropagation();
+      var tiles=Array.prototype.slice.call(document.querySelectorAll('.play-tile'));
+      var idx=tiles.indexOf(tile);
+      if(idx===0) window.openPiggyGame();
+      else if(idx===1) window.openPiggyQuiz();
+      else if(idx===2) window.openPiggyQuest();
+      else if(idx===3) window.openPiggyRewards();
       return;
     }
-    if(!activeUid||!window.__appOn||!isProfileComplete()){goView('loginView');return;}
-    tab='play';
-    ensurePlayNavigation('play');
-    var app=document.getElementById('app');
-    if(app) app.innerHTML='<div class="brand"><span class="brand-icon"><img src="'+LOGO+'" alt=""></span><span>PiggySweep</span><button class="brand-profile" type="button" aria-label="My Profile" title="My Profile" onclick="openMyProfile()">👤</button></div>'+playRender();
-    var fabs=document.getElementById('fabs');if(fabs)fabs.style.display='flex';
-    window.scrollTo(0,0);
-  };
-  window.openPiggyGame=openPiggyGame;window.flipPiggyCard=flipPiggyCard;window.openPiggyQuiz=openPiggyQuiz;window.answerPiggyQuiz=answerPiggyQuiz;window.openPiggyQuest=openPiggyQuest;window.completePiggyQuest=completePiggyQuest;window.openPiggyRewards=openPiggyRewards;
-  var style=document.createElement('style');style.textContent='.play-wrap{max-width:480px;margin:0 auto;padding-bottom:24px}.play-hero{background:var(--grad);color:#fff;border-radius:22px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 8px 24px #7541d822}.play-hero h1{font-size:25px;margin:8px 0}.play-hero p{font-size:13px;line-height:1.5;margin:0;color:#fff}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.12em;opacity:.8}.play-score{display:inline-block;margin-top:14px;background:#ffffff27;padding:8px 12px;border-radius:20px;font-weight:800}.play-hero-pig{font-size:68px;filter:drop-shadow(0 5px 5px #421c5540)}.play-mascot{display:flex;align-items:center;gap:14px;margin-top:14px;border:1px solid var(--line)}.play-mascot p{margin:4px 0 0}.play-mascot-face{font-size:42px}.play-mascot.worried{border-color:#f6b66c;background:#fff6e9}.play-mascot.thinking{border-color:#d6c5ff}.play-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.play-tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 12px;text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:7px;min-height:132px;box-shadow:0 4px 14px #4630780c}.play-tile span{font-size:30px}.play-tile small{color:var(--mut);font-size:11px}.play-subhead{display:flex;align-items:center;gap:12px;margin:8px 0 14px}.play-subhead h2{font-size:21px;margin:0}.match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:18px 0}.match-card{aspect-ratio:1;border:1px solid var(--line);border-radius:14px;background:#eee7ff;color:#5d35b6;font-size:28px;font-weight:800}.match-card.revealed{background:#fff;border-color:#a78bfa}.match-card:disabled{opacity:1}.play-success{padding:12px;background:#e9fff3;color:#126c43;border-radius:12px;font-weight:800}.quiz-options{display:grid;gap:9px;margin:18px 0}.quiz-option{padding:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit}.quest-card{text-align:center}.quest-emoji{font-size:52px}.quest-progress{display:flex;flex-direction:column;margin:18px}.quest-progress b{font-size:30px;color:var(--teal)}.play-reward-hero{background:var(--grad);color:white;text-align:center;padding:24px;border-radius:20px}.play-reward-hero div{font-size:42px}.play-reward-hero h2{margin:4px}.play-reward-hero small{opacity:.9}.badge-list{display:flex;flex-wrap:wrap;gap:8px}.game-badge{background:#eee7ff;color:#6036b4;border-radius:20px;padding:8px 11px;font-size:12px;font-weight:800}.play-toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,15px);background:#30204e;color:#fff;padding:11px 16px;border-radius:24px;opacity:0;pointer-events:none;transition:.2s;z-index:120;white-space:nowrap}.play-toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:420px){nav button{font-size:9px;padding:12px 0}.nav-icon{font-size:18px}.play-hero h1{font-size:22px}}';document.head.appendChild(style);
+  },true);
 })();
 
 </script>
 
+<script>
+/* PiggySweep build 3.0: Goal Management, staged budget alerts, Piggy mascots */
+(function(){
+  var MS=[['😊','Happy Piggy'],['🤔','Thinking Piggy'],['😟','Worried Piggy'],['🐷','Concerned Piggy'],['🐷💔','Broken Piggy']];
+  function lvl(p){return p>100.0001?4:p>=99.9999?3:p>=90?2:p>=75?1:0;}
+  function mk(){return day(new Date()).slice(0,7);}
+  function stat(k){var b=bv(k),s=mspent()[k]||0;return {b:b,s:s,p:b>0?s/b*100:0};}
+  function seen(){if(!S.alertSeen||typeof S.alertSeen!=='object')S.alertSeen={};return S.alertSeen;}
+  function sync(){var z=seen(),m=mk();Object.keys(z).forEach(function(k){if(k.slice(0,7)!==m){delete z[k];return;}var l=lvl(stat(k.slice(8)).p);if(l<z[k])z[k]=l;});}
+  function title(l){return l===4?'Oops! Piggy needs a little help!':l===3?'Budget limit reached':l===2?'Piggy is getting worried':'Heads up from Piggy';}
+  window.bwarn=function(){var sp=mspent(),o=[];CAT.forEach(function(c){var b=bv(c[0]),s=sp[c[0]]||0;if(b<=0)return;var p=s/b*100,l=lvl(p);if(l>=1)o.push({c:c,b:b,s:s,p:p,l:l});});
+    return o.sort(function(a,b){return b.p-a.p}).map(function(x){var over=x.s-x.b;return '<div class="alert-notify"><h3><span style="font-size:28px">'+MS[x.l][0]+'</span> '+title(x.l)+'</h3><p><b>'+x.c[1]+' '+esc(x.c[2])+'</b> · '+Math.round(x.p)+'% used<br>'+inr(x.s)+' / '+inr(x.b)+(over>0?'<br><b style="color:var(--warn-txt)">'+inr(over)+' over budget</b>':'')+'</p><div class="bar" style="margin:0"><i style="background:var(--'+(x.l>=3?'warn-txt':'amb')+');width:'+Math.min(100,x.p)+'%"></i></div></div>';}).join('');};
+  function host(id,inner){var h=document.createElement('div');h.id=id;h.className='modal-overlay';h.onclick=function(e){if(e.target===h)hideModal(id)};h.innerHTML='<div class="modal-content" id="'+id+'Content"'+(inner||'')+'></div>';document.body.appendChild(h);}
+  host('alertModal',' style="text-align:center"');host('goalModal');
+  function popup(x){var over=x.s-x.b;$('alertModalContent').innerHTML='<div style="font-size:72px;line-height:1.1">'+MS[x.l][0]+'</div><div class="mut" style="margin:0">'+MS[x.l][1]+'</div><h2 style="margin:8px 0">'+title(x.l)+'</h2><p class="mut">'+(x.l===4?'Your '+esc(x.c[2])+' budget has exceeded its limit.':'You have used '+Math.round(x.p)+'% of your '+esc(x.c[2])+' budget this month.')+'</p><div class="big" style="font-size:30px">'+inr(x.s)+' / '+inr(x.b)+'</div>'+(over>0?'<p style="color:var(--warn-txt);font-weight:800">'+inr(over)+' over budget</p>':'<p class="mut">'+inr(x.b-x.s)+' left</p>')+'<p class="mut">'+(x.l===4?"Let's review your spending and help Piggy get back on track!":'Keep an eye on this category.')+'</p><div class="two"><button class="btn" onclick="hideModal(\'alertModal\');go(\'bud\')">Review budget</button><button class="btn alt" onclick="hideModal(\'alertModal\')">Dismiss</button></div>';showModal('alertModal');}
+  var baseAdd=window.addTx;
+  window.addTx=function(){var k=window.cat,n=S.tx.length,m=mk(),dt=$('dt')&&$('dt').value;baseAdd();if(S.tx.length<=n)return;sync();
+    if((dt||day(new Date())).slice(0,7)===m){var st=stat(k);if(st.b>0){var l=lvl(st.p),z=seen(),key=m+'|'+k;if(l>=1&&l>(z[key]||0)){z[key]=l;save();popup({c:CT[k]||CT.other,b:st.b,s:st.s,p:st.p,l:l});return;}}}
+    save();};
+  var baseDl=window.dl;window.dl=function(i){baseDl(i);sync();save();};
+  var baseDba=window.dba;window.dba=function(){var h=baseDba(),w=window.bwarn();return w?h.replace('</div>','</div><p class="mut" style="margin:0 0 8px">Budget status for this month</p>'+w):h;};
+  var basePl=window.pl;
+  window.pl=function(){var h=basePl(),r=num(S.p.g),g=[];S.p.goals.forEach(function(x,i){if((x.n||'').trim()&&num(x.a)>0)g.push([x,i]);});
+    var c='<div class="card"><h2>Your Goals 🎯</h2>';if(!g.length)c+='<p class="mut">No goals yet. Add one to see the monthly saving it needs.</p>';
+    g.forEach(function(z){var x=z[0],i=z[1],a=num(x.a),y=num(x.y)||1,sv=num(x.s),done=sv>=a,m=need(Math.max(0,a-sv),y,r),p=Math.min(100,sv/a*100);
+      c+='<div class="goal"><div class="row" style="border:0;padding:0"><b>'+(done?'🎉 ':'')+esc(x.n)+'</b><span><button class="x" aria-label="Edit goal" onclick="openGoalEditor('+i+')">✏️</button><button class="x" aria-label="Remove goal" onclick="removeGoal('+i+')">🗑️</button></span></div><p class="mut" style="margin:4px 0">Target: '+inr(a)+' · '+y+(y===1?' year':' years')+'</p><div class="bar"><i style="background:var(--grad);width:'+p+'%"></i></div><div class="row" style="border:0;padding:0"><span class="mut">Progress '+inr(sv)+' ('+Math.round(p)+'%)</span><b>'+(done?'Goal achieved! 🎉':inr(m)+'/mo')+'</b></div></div>';});
+    return h.replace('</h1>','</h1>'+c+'<button class="btn alt" onclick="openGoalEditor(-1)">+ Add Another Goal</button><p class="mut" style="font-size:11px">Build 3.1</p></div>');};
+  window.openGoalEditor=function(i){var x=i>=0?S.p.goals[i]:{n:'',a:'',y:5,s:''};
+    if(i<0&&S.p.goals.filter(function(g){return (g.n||'').trim()&&num(g.a)>0}).length>=10){alert('You can keep up to 10 goals.');return;}
+    $('goalModalContent').innerHTML='<div class="row" style="border:0;padding:0 0 8px"><h2 style="margin:0">'+(i>=0?'Edit goal':'Add a goal')+' 🎯</h2><button class="x" onclick="hideModal(\'goalModal\')">✕</button></div><label>Goal name</label><input id="gm_n" data-k="label" value="'+esc(x.n)+'" placeholder="e.g. Emergency Fund"><div class="two"><div><label>Target (₹)</label><input id="gm_a" inputmode="decimal" value="'+esc(x.a)+'"></div><div><label>Years (1–60)</label><input id="gm_y" inputmode="decimal" data-max="60" value="'+esc(x.y)+'"></div></div><label>Saved so far (₹)</label><input id="gm_s" inputmode="decimal" value="'+esc(x.s||'')+'" placeholder="0"><button class="btn" onclick="saveGoalEditor('+i+')">Save goal</button>';showModal('goalModal');};
+  window.saveGoalEditor=function(i){var n=$('gm_n').value.trim(),a=num($('gm_a').value),y=num($('gm_y').value),s=num($('gm_s').value);
+    var ok=/^\d+(\.\d{1,2})?$/,rw=function(id){return $(id).value.trim()};if(!ok.test(rw('gm_a'))||!ok.test(rw('gm_y'))||(rw('gm_s')!==''&&!ok.test(rw('gm_s')))){alert('Please enter valid positive numbers for target, years and saved amount (up to 2 decimals).');return;}if(a>999999999){alert('The target amount is too large.');return;}if(s>a){alert("Saved so far can't be more than the target. If you have reached it, enter the target amount.");return;}if(!n){alert('Enter a goal name.');return;}if(a<=0){alert('Enter a target amount above 0.');return;}if(y<1||y>60){alert('Years must be between 1 and 60.');return;}
+    var o={n:n,a:String(a),y:String(y),s:String(s)};
+    if(i>=0)S.p.goals[i]=o;else{var e=-1;S.p.goals.forEach(function(g,k){if(e<0&&!(g.n||'').trim()&&!(num(g.a)>0))e=k;});if(e>=0)S.p.goals[e]=o;else S.p.goals.push(o);}
+    save();hideModal('goalModal');go('plan');};
+  window.removeGoal=function(i){var g=S.p.goals[i];if(!g||!confirm('Remove the goal "'+g.n+'"? Your other goals and records stay as they are.'))return;S.p.goals.splice(i,1);if(!S.p.goals.length)S.p.goals=[{n:'',a:'',y:5}];save();go('plan');};
+})();
+</script>
+<script>
+/* Write to Us: Support & Feedback. Set ONE of the two values below to enable sending. */
+(function(){
+  var FEEDBACK_EMAIL='';      /* e.g. 'support@yourdomain.com' (opens the user's email app with the message filled in) */
+  var FEEDBACK_ENDPOINT='';   /* optional: a Formspree form URL. Never put private keys or passwords here. */
+  var VER='Build 3.1', REF='', TYPES=[['bug','🐛','Report a bug or technical issue'],['improve','💡','Suggest an improvement'],['feature','✨','Request a new feature'],['general','💬','Share general feedback']];
+  var h=document.createElement('div');h.id='feedbackModal';h.className='modal-overlay';h.onclick=function(e){if(e.target===h)hideModal('feedbackModal')};h.innerHTML='<div class="modal-content" id="feedbackModalContent"></div>';document.body.appendChild(h);
+  var C=function(){return $('feedbackModalContent')};
+  function newRef(){var r='';for(var i=0;i<4;i++)r+='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.charAt(Math.floor(Math.random()*32));return 'PS-'+day(new Date()).replace(/-/g,'')+'-'+r;}
+  function diag(){var n=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();return ['Reference: '+REF,'App: PiggySweep '+VER,'Platform: '+(n?'Android app':'Browser'),'Device/browser: '+navigator.userAgent,'Screen size: '+window.innerWidth+'x'+window.innerHeight,'Current screen: '+(window.tab||'unknown'),'Date/time: '+new Date().toString(),'User ID: '+(activeUid||'not signed in')].join('\n');}
+  function read(){var t=document.querySelector('input[name="fbType"]:checked');return {type:t?t.value:'bug',sub:($('fb_s').value||'').trim(),desc:($('fb_d').value||'').trim(),email:($('fb_e').value||'').trim()};}
+  function label(t){for(var i=0;i<TYPES.length;i++)if(TYPES[i][0]===t)return TYPES[i][2];return t;}
+  function msg(f){return label(f.type)+'\nSubject: '+f.sub+'\n\n'+f.desc+'\n\nReply to: '+f.email+'\n\n--- Diagnostics (no password is ever included) ---\n'+diag();}
+  function check(f){if(f.sub.length<3){alert('Please add a short subject (at least 3 characters).');return false;}if(f.desc.length<10){alert('Please describe your feedback in a little more detail (at least 10 characters).');return false;}if(!validEmail(f.email)){alert('Please enter a valid email address so we can reply.');return false;}return true;}
+  function form(em,keep){keep=keep||{};
+    C().innerHTML='<div class="row" style="border:0;padding:0 0 4px"><h2 style="margin:0">We\'d love to hear from you! 🐷</h2><button class="x" aria-label="Close" onclick="hideModal(\'feedbackModal\')">✕</button></div><p class="mut">Help us make PiggySweep better. Tell us what happened or what you\'d like to see.</p><b>What would you like to tell us?</b>'+
+    TYPES.map(function(t){return '<label style="display:flex;gap:10px;align-items:center;text-transform:none;letter-spacing:0;font-size:15px;margin:8px 0;color:var(--ink)"><input type="radio" name="fbType" value="'+t[0]+'"'+((keep.type||'bug')===t[0]?' checked':'')+' style="width:auto;margin:0"> '+t[1]+' '+t[2]+'</label>'}).join('')+
+    '<label>Subject</label><input id="fb_s" maxlength="80" placeholder="Briefly describe the issue" value="'+esc(keep.sub||'')+'"><label>Description</label><textarea id="fb_d" maxlength="1000" rows="5" placeholder="Tell us what happened, what you expected, and what you experienced…" style="width:100%;font:inherit;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:rgba(255,255,255,.5);color:var(--ink);font-size:16px">'+esc(keep.desc||'')+'</textarea><label>Email address</label><input id="fb_e" type="email" autocapitalize="none" placeholder="Your email for our response" value="'+esc(keep.email||em||'')+'"><p class="mut" style="font-size:12px;margin-top:8px">We also include your app version, device type, current screen, date/time and account ID to help us fix things faster. Your password is never included.</p><button class="btn" id="fb_send" onclick="sendWriteToUs()">Send feedback</button><button class="btn alt" onclick="copyWriteToUs()">Copy feedback draft</button>';
+    showModal('feedbackModal');}
+  function done(t,b){C().innerHTML='<div style="text-align:center"><div style="font-size:56px">'+(t.indexOf('Sorry')===0?'😟':'🎉')+'</div><h2>'+t+'</h2><p class="mut">'+b+'</p><p><b>Reference: '+REF+'</b></p><button class="btn" onclick="hideModal(\'feedbackModal\')">Done</button></div>';}
+  window.openWriteToUs=function(){var em='';try{em=(firebase.auth().currentUser||{}).email||''}catch(e){}REF=newRef();form(em);};
+  window.copyWriteToUs=function(){var f=read();if(!check(f))return;var t=msg(f);
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){alert('Feedback draft copied.');},function(){alert('Could not copy. Please select and copy the text manually.');});
+    else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');alert('Feedback draft copied.');}catch(e){alert('Could not copy.');}a.remove();}};
+  window.sendWriteToUs=function(){var f=read();if(!check(f))return;var b=$('fb_send');
+    if(FEEDBACK_ENDPOINT){b.disabled=true;b.textContent='Sending…';
+      fetch(FEEDBACK_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({reference:REF,type:label(f.type),subject:f.sub,message:f.desc,email:f.email,diagnostics:diag()})})
+        .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);done('Thank you! 🐷','Your feedback has been sent. We will reply to '+esc(f.email)+'.');})
+        .catch(function(){b.disabled=false;b.textContent='Send feedback';alert('Could not send right now. Check your internet connection and try again, or use "Copy feedback draft".');});
+    } else if(FEEDBACK_EMAIL){window.location.href='mailto:'+FEEDBACK_EMAIL+'?subject='+encodeURIComponent('[PiggySweep '+REF+'] '+f.sub)+'&body='+encodeURIComponent(msg(f));done('Almost done!','Your email app should open with the message filled in. Please press Send there to deliver it.');}
+    else alert('Sending is not set up yet. Please use "Copy feedback draft" for now.');};
+})();
+</script>
 </body>
 </html>
+<style>
+@media (max-width: 360px) {
+  .cats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+  .cat { font-size: 10px; padding: 7px 2px; }
+}
+</style>
